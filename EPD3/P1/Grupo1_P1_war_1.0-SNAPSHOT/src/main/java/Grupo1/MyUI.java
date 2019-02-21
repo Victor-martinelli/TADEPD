@@ -17,19 +17,24 @@ import org.apache.commons.lang3.StringUtils;
 import com.vaadin.ui.VerticalLayout;
 
 /**
- * This UI is the application entry point. A UI may either represent a browser window 
- * (or tab) or some part of a html page where a Vaadin application is embedded.
+ * This UI is the application entry point. A UI may either represent a browser
+ * window (or tab) or some part of a html page where a Vaadin application is
+ * embedded.
  * <p>
- * The UI is initialized using {@link #init(VaadinRequest)}. This method is intended to be 
- * overridden to add component to the user interface and initialize non-component functionality.
+ * The UI is initialized using {@link #init(VaadinRequest)}. This method is
+ * intended to be overridden to add component to the user interface and
+ * initialize non-component functionality.
  */
 @Theme("mytheme")
-public class MyUI extends UI implements Button.ClickListener{
-    
+public class MyUI extends UI implements Button.ClickListener {
+
     public GridLayout grid;
     public Integer resultado;
+    public Label primeroEtiq;
+    public Label segundoEtiq;
+    public Label operacionEtiq;
     public Label resultadoEtiq;
-    
+
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         /*
@@ -47,86 +52,127 @@ public class MyUI extends UI implements Button.ClickListener{
         layout.addComponents(name, button);
         layout.setMargin(true);
         layout.setSpacing(true);
-        */
-        grid = new GridLayout(4,1);
-        
+         */
+
+        primeroEtiq = new Label("");
+        segundoEtiq = new Label("");
+        operacionEtiq = new Label("");
+        resultadoEtiq = new Label("");
+
+        grid = new GridLayout(7, 1);
+
         HorizontalLayout layoutNumbers1 = new HorizontalLayout();
-        
+
         //VerticalSplitPanel vsplit = new VerticalSplitPanel(); 
-        
-        createNumbers(layoutNumbers1);
-        grid.addComponent(layoutNumbers1,0,0);
-        
+        createNumbers(layoutNumbers1, "0");
+        grid.addComponent(layoutNumbers1, 0, 0);
+
         VerticalLayout layoutNumbers2 = new VerticalLayout();
 
-        createNumbers(layoutNumbers2);
-        grid.addComponent(layoutNumbers2,1,0);
-        
+        createNumbers(layoutNumbers2, "1");
+        grid.addComponent(layoutNumbers2, 1, 0);
+
         HorizontalLayout operationLayout = new HorizontalLayout();
-        
+
         operationLayout.addComponent(createOperationButton("+"));
         operationLayout.addComponent(createOperationButton("-"));
         operationLayout.addComponent(createOperationButton("*"));
         operationLayout.addComponent(createOperationButton("/"));
-        
+
         grid.addComponent(operationLayout, 2, 0);
-        
+
+        grid.addComponent(primeroEtiq, 3, 0);
+        grid.addComponent(operacionEtiq, 4, 0);
+        grid.addComponent(segundoEtiq, 5, 0);
+        grid.addComponent(resultadoEtiq, 6, 0);
+
         this.setContent(grid);
     }
-    
-    protected void createNumbers(Layout layout)
-    {
-        for (int i = 0; i <=9; i++) {
+
+    public void createNumbers(Layout layout, String phase) {
+        for (int i = 0; i <= 9; i++) {
             Button button = new Button(Integer.toString(i));
-            button.addListener(this);
-           layout.addComponent(button);
+            //This is so that we know if its first or second
+            button.setId(phase);
+            button.addClickListener(this);
+            layout.addComponent(button);
         }
     }
-    
 
-    // application.
+    public Button createOperationButton(String value) {
+        Button operation = new Button(value);
+
+        operation.addClickListener(this);
+
+        return operation;
+    }
+
     public void buttonClick(ClickEvent event) {
 
         Button button = event.getButton();
 
         String valorBotonPulsado = Character.toString(button.getCaption().charAt(0));
 
-        // Calculate the new value
-        int newValue = realizarOperacion(valorBotonPulsado);
-
-        // Update the result label with the new value
-        display.setValue(newValue);
+        realizarOperacionYMostrar(valorBotonPulsado, button);
 
     }
-    
-    protected int realizarOperacion(String valorBotonPulsado)
-    {
-        
+
+    public void realizarOperacionYMostrar(String valorBotonPulsado, Button boton) {
+        //mainWindow.showNotification("Hi" +name);
         //Si pulsamos un boton de numero
-        if(StringUtils.isNumeric(valorBotonPulsado))
-        {
-            
-        }
-        
-    }
-    
-    
-    
-    protected Button createOperationButton(String value)
-    {
-        Button operation = new Button(value);
-        
-        operation.addClickListener(new Button.ClickListener() { 
-                public void buttonClick(ClickEvent event) {
-                operacion=value;
+        if (StringUtils.isNumeric(valorBotonPulsado)) {
+
+            //Si pulsamos uno de los segundos botones y hemos pulsado anteriormente
+            // los primeros botones, realizamos el calculo
+            if (boton.getId().equals("0")) {
+                primeroEtiq.setValue(valorBotonPulsado);
+            } else {
+                segundoEtiq.setValue(valorBotonPulsado);
+
+                if (StringUtils.isNumeric(primeroEtiq.getValue())) {
+                    Double primero = Double.parseDouble(primeroEtiq.getValue());
+                    Double segundo = Double.parseDouble(segundoEtiq.getValue());
+                    Double result = 0.0;
+                    boolean error = false;
+                    String operacion = operacionEtiq.getValue();
+
+                        switch (operacion) {
+                            case "+": {
+                                result = primero + segundo;
+                                break;
+                            }
+
+                            case "-": {
+                                result = primero - segundo;
+                                break;
+                            }
+                            case "*": {
+                                result = primero * segundo;
+                                break;
+                            }
+                            case "/": {
+                                if(segundo==0.0)
+                                {
+                                   resultadoEtiq.setValue("= ERROR: Operacion no permitida");
+                                   error=true;
+                                }
+                                else
+                                result = primero/segundo;
+                                break;
+                            }
+
+                        }          
+                        if(!error)
+                        resultadoEtiq.setValue("=" + Double.toString(result));
                 }
+
             }
-            );
-        
-        return operation;
+
+        } else {
+            operacionEtiq.setValue(valorBotonPulsado);
+        }
+
     }
-    
-    
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)

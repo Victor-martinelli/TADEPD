@@ -37,22 +37,6 @@ public class MyUI extends UI implements Button.ClickListener {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        /*
-        final VerticalLayout layout = new VerticalLayout();
-        
-        final TextField name = new TextField();
-        name.setCaption("Type your name here:");
-
-        Button button = new Button("Click Me");
-        button.addClickListener( e -> {
-            layout.addComponent(new Label("Thanks " + name.getValue() 
-                    + ", it works!"));
-        });
-        
-        layout.addComponents(name, button);
-        layout.setMargin(true);
-        layout.setSpacing(true);
-         */
 
         primeroEtiq = new Label("");
         segundoEtiq = new Label("");
@@ -118,7 +102,6 @@ public class MyUI extends UI implements Button.ClickListener {
     }
 
     public void realizarOperacionYMostrar(String valorBotonPulsado, Button boton) {
-        //mainWindow.showNotification("Hi" +name);
         //Si pulsamos un boton de numero
         if (StringUtils.isNumeric(valorBotonPulsado)) {
 

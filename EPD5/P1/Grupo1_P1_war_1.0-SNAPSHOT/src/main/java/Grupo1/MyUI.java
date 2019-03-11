@@ -12,6 +12,7 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import org.apache.commons.lang3.StringUtils;
 import com.vaadin.ui.VerticalLayout;
@@ -28,9 +29,24 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("mytheme")
 public class MyUI extends UI implements Button.ClickListener {
 
+    
+    
+    public String table[][] = {{"7","8","9","/"},
+                                {"4","5","6","*"},
+                                {"1","2","3","-"},
+                                {"0","=","C","+"}};
     public GridLayout grid;
+    /*
+    0 --> Esperando primer numero
+    1 --> Esperando operacion
+    2 --> Esperando segundo numero
+    3 --> Esperando =
+    4 --> Resultado
+    */
+    public Integer fase;
     public Integer resultado;
     public Label primeroEtiq;
+    public Label esperandoEtiq;
     public Label segundoEtiq;
     public Label operacionEtiq;
     public Label resultadoEtiq;
@@ -38,57 +54,53 @@ public class MyUI extends UI implements Button.ClickListener {
     @Override
     protected void init(VaadinRequest vaadinRequest) {
 
+        fase=0;
+        esperandoEtiq = new Label("Esperando Primer Numero...");
         primeroEtiq = new Label("");
         segundoEtiq = new Label("");
         operacionEtiq = new Label("");
         resultadoEtiq = new Label("");
 
-        grid = new GridLayout(7, 1);
+        grid = new GridLayout(4,4);
+        
+        createButtons();
+        
+        VerticalLayout vLayout = new VerticalLayout();
+        
+        HorizontalLayout hLayout = new HorizontalLayout();
+        
+        hLayout.addComponent(primeroEtiq);
+        hLayout.addComponent(operacionEtiq);
+        hLayout.addComponent(segundoEtiq);
+        hLayout.addComponent(resultadoEtiq);
+        
+        vLayout.addComponent(esperandoEtiq);
+        
+        VerticalLayout vLayoutGrid = new VerticalLayout();
 
-        HorizontalLayout layoutNumbers1 = new HorizontalLayout();
+        vLayoutGrid.addComponent(grid);
+        
+        vLayout.addComponent(hLayout);
+        vLayout.addComponent(vLayoutGrid);
 
-        //VerticalSplitPanel vsplit = new VerticalSplitPanel(); 
-        createNumbers(layoutNumbers1, "0");
-        grid.addComponent(layoutNumbers1, 0, 0);
-
-        VerticalLayout layoutNumbers2 = new VerticalLayout();
-
-        createNumbers(layoutNumbers2, "1");
-        grid.addComponent(layoutNumbers2, 1, 0);
-
-        HorizontalLayout operationLayout = new HorizontalLayout();
-
-        operationLayout.addComponent(createOperationButton("+"));
-        operationLayout.addComponent(createOperationButton("-"));
-        operationLayout.addComponent(createOperationButton("*"));
-        operationLayout.addComponent(createOperationButton("/"));
-
-        grid.addComponent(operationLayout, 2, 0);
-
-        grid.addComponent(primeroEtiq, 3, 0);
-        grid.addComponent(operacionEtiq, 4, 0);
-        grid.addComponent(segundoEtiq, 5, 0);
-        grid.addComponent(resultadoEtiq, 6, 0);
-
-        this.setContent(grid);
+        this.setContent(vLayout);
     }
-
-    public void createNumbers(Layout layout, String phase) {
-        for (int i = 0; i <= 9; i++) {
-            Button button = new Button(Integer.toString(i));
-            //This is so that we know if its first or second
-            button.setId(phase);
-            button.addClickListener(this);
-            layout.addComponent(button);
+    
+    
+    public void createButtons()
+    {
+        for(int i=0;i<table.length;i++)
+        {
+            for(int j=0;j<table[i].length;j++)
+            {
+                Button button = new Button(table[i][j]);
+                
+                button.addClickListener(this);
+                
+                grid.addComponent(button,j,i);
+                
+            }
         }
-    }
-
-    public Button createOperationButton(String value) {
-        Button operation = new Button(value);
-
-        operation.addClickListener(this);
-
-        return operation;
     }
 
     public void buttonClick(ClickEvent event) {
@@ -102,23 +114,51 @@ public class MyUI extends UI implements Button.ClickListener {
     }
 
     public void realizarOperacionYMostrar(String valorBotonPulsado, Button boton) {
-        //Si pulsamos un boton de numero
-        if (StringUtils.isNumeric(valorBotonPulsado)) {
-
-            //Si pulsamos uno de los segundos botones y hemos pulsado anteriormente
-            // los primeros botones, realizamos el calculo
-            if (boton.getId().equals("0")) {
-                primeroEtiq.setValue(valorBotonPulsado);
-            } else {
-                segundoEtiq.setValue(valorBotonPulsado);
-
-                if (StringUtils.isNumeric(primeroEtiq.getValue())) {
-                    Double primero = Double.parseDouble(primeroEtiq.getValue());
-                    Double segundo = Double.parseDouble(segundoEtiq.getValue());
-                    Double result = 0.0;
-                    boolean error = false;
-                    String operacion = operacionEtiq.getValue();
-
+        //Si no pulsamos el boton de borrar
+        if (!valorBotonPulsado.equals("C")) {
+            switch (fase) {
+                case 0:
+                    if(StringUtils.isNumeric(valorBotonPulsado))
+                    {
+                        primeroEtiq.setValue(valorBotonPulsado);
+                        esperandoEtiq.setValue("Esperando Operacion...");
+                        fase++;
+                    }
+                    else
+                    {
+                        Notification.show("ERROR","Debes pulsar un numero",Notification.Type.ERROR_MESSAGE);
+                    }   break;
+                case 1:
+                    if(!StringUtils.isNumeric(valorBotonPulsado))
+                    {
+                        operacionEtiq.setValue(valorBotonPulsado);
+                        esperandoEtiq.setValue("Esperando Segundo Numero...");
+                        fase++;
+                    }
+                    else
+                    {
+                        Notification.show("ERROR","Debes pulsar una operacion",Notification.Type.ERROR_MESSAGE);
+                    }   break;
+                case 2:
+                    if(StringUtils.isNumeric(valorBotonPulsado))
+                    {
+                        segundoEtiq.setValue(valorBotonPulsado);
+                        esperandoEtiq.setValue("Esperando =...");
+                        fase++;
+                    }
+                    else
+                    {
+                        Notification.show("ERROR","Debes pulsar un numero",Notification.Type.ERROR_MESSAGE);
+                    }   break;
+                case 3:
+                    if(valorBotonPulsado.equals("="))
+                    {
+                        Double primero = Double.parseDouble(primeroEtiq.getValue());
+                        Double segundo = Double.parseDouble(segundoEtiq.getValue());
+                        Double result = 0.0;
+                        boolean error = false;
+                        String operacion = operacionEtiq.getValue();
+                        
                         switch (operacion) {
                             case "+": {
                                 result = primero + segundo;
@@ -136,23 +176,40 @@ public class MyUI extends UI implements Button.ClickListener {
                             case "/": {
                                 if(segundo==0.0)
                                 {
-                                   resultadoEtiq.setValue("= ERROR: Operacion no permitida");
-                                   error=true;
+                                    resultadoEtiq.setValue("= ERROR: Operacion no permitida");
+                                    error=true;
                                 }
                                 else
-                                result = primero/segundo;
+                                    result = primero/segundo;
                                 break;
                             }
-
+                            
                         }          
                         if(!error)
-                        resultadoEtiq.setValue("=" + Double.toString(result));
-                }
-
+                        {
+                            resultadoEtiq.setValue("=" + Double.toString(result));
+                        }
+                        fase++;
+                        esperandoEtiq.setValue("Para realizar otra operacion, pulsa C...");
+                    }
+                    else
+                    {
+                        Notification.show("ERROR","Debes pulsar =",Notification.Type.ERROR_MESSAGE);
+                    }   break;
+                case 4:
+                    Notification.show("Atencion","Para realizar otra operacion, pulsa C",Notification.Type.HUMANIZED_MESSAGE);
+                    break;
+                default:
+                    break;
             }
 
         } else {
-            operacionEtiq.setValue(valorBotonPulsado);
+            fase=0;
+            esperandoEtiq.setValue("Esperando Primer Numero...");
+            primeroEtiq.setValue("");
+            segundoEtiq.setValue("");
+            operacionEtiq.setValue("");
+            resultadoEtiq.setValue("");
         }
 
     }

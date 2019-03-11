@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.mycompany</groupId>
-    <artifactId>P4</artifactId>
+    <artifactId>P3</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>P4</name>
+    <name>P3</name>
 	
     <prerequisites>
         <maven>3</maven>

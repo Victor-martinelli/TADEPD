@@ -32,8 +32,6 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("mytheme")
 public class Principal extends UI {
 
-    private int movieId;
-
     @Override
     protected void init(VaadinRequest vaadinRequest) {
 
@@ -55,11 +53,14 @@ public class Principal extends UI {
         Label buscador = new Label("<h2>Buscador de Peliculas</h2>", ContentMode.HTML);
         Label buscadorExp = new Label("<h3>Introduzca el titulo de la pelicula para obtener mas informacion.</h3>", ContentMode.HTML);
         Label tituloPelicula = new Label("<h1><b>Titulo</b></h1>", ContentMode.HTML);
-        Label masInf = new Label("<h2><b>Mas Informacion</b>: </h2>", ContentMode.HTML);
+        Label masInf = new Label("<h3><b>Mas Informacion</b>: </h3>", ContentMode.HTML);
         Label sinopsis = new Label("<h2><b>Sinopsis</b></h2>", ContentMode.HTML);
-        Label precioPersona = new Label("<h2><b>Precio por persona(€)</b></h2>", ContentMode.HTML);
-        Label salaProyeccion = new Label("<h2><b>Sala de Proyeccion</b></h2>", ContentMode.HTML);
-        Label sesiones = new Label("<h2><b>Sesiones</b></h2>", ContentMode.HTML);
+        Label precioPersona = new Label("<h3><b>Precio por persona(€)</b></h3>", ContentMode.HTML);
+        Label salaProyeccion = new Label("<h3><b>Sala de Proyeccion</b></h3>", ContentMode.HTML);
+        
+        
+        
+        Label sesiones = new Label("<h3><b>Sesiones</b></h3>", ContentMode.HTML);
         Label explicacion = new Label("<h3>Por favor, pulse sobre una pelicula para obtener mas informacion</h3>", ContentMode.HTML);
 
         Table tabla = new Table();
@@ -70,37 +71,110 @@ public class Principal extends UI {
         tabla.addContainerProperty("Sala de Proyeccion", Integer.class, null);
         tabla.addContainerProperty("Sesiones", String.class, null);
 
-        tabla.addItem(new Object[]{0, "Kung Pow! -  Enter The Fist", "3", 1, "18:00-19:30"}, 1);
-        tabla.addItem(new Object[]{1, "Tenacious D: The Pick Of Destiny", "4", 2, "22:00-23:30"}, 2);
-        tabla.addItem(new Object[]{2, "Jesus Christ Vampire Hunter", "2", 3, "00:00-01:00"}, 3);
+        tabla.addItem(new Object[]{0, "Kung Pow Enter The Fist", "3", 1, "18:00-19:30"}, 0);
+        tabla.addItem(new Object[]{1, "Tenacious D: The Pick Of Destiny", "4", 2, "22:00-23:30"}, 1);
+        tabla.addItem(new Object[]{2, "Jesus Christ Vampire Hunter", "2", 3, "00:00-01:00"}, 2);
 
         tabla.addItemClickListener(new ItemClickEvent.ItemClickListener() {
             @Override
             public void itemClick(ItemClickEvent event) {
+                
+                int movieId = Integer.parseInt(event.getItem().getItemProperty("ID").getValue().toString());
+                
                 String title = event.getItem().getItemProperty("Nombre de la pelicula").getValue().toString();
                 String desc = "";
                 String inf = "";
-                String precio = "";
-                String sesion = "";
-                String sala = "";
+                String precio = tabla.getContainerProperty(movieId,"Precio por persona(€)").getValue().toString();
+                String sesion = tabla.getContainerProperty(movieId,"Sesiones").getValue().toString();
+                String sala = tabla.getContainerProperty(movieId,"Sala de Proyeccion").getValue().toString();
                 Integer value = Integer.parseInt(event.getItem().getItemProperty("ID").getValue().toString());
 
                 desc = descPeliculas[value];
                 inf = infPeliculas[value];
 
                 tituloPelicula.setValue("<h1><b>Titulo</b>: "+title+"</h1>");
-                masInf.setValue("<h2><b>Mas Informacion</b>: "+inf+"</h2>");
-                sinopsis.setValue("<h2><b>Sinopsis</b>: "+desc+"</h2>");
+                precioPersona.setValue("<h3><b>Precio por persona(€)</b>: "+precio+"</h3>");
+                salaProyeccion.setValue("<h3><b>Sala de Proyeccion</b>: "+sala+"</h3>");
+                sesiones.setValue("<h3><b>Sesion</b>: "+sesion+"</h3>");
+                masInf.setValue("<h3><b>Mas Informacion</b>: "+inf+"</h3>");
+                sinopsis.setValue("<h3><b>Sinopsis</b>: "+desc+"</h3>");
             }
         });
+        
+        FormLayout formularioBuscador= new FormLayout();
+        
+        formularioBuscador.setSizeUndefined();
+        
+        TextField tf = new TextField("Nombre de la pelicula");
+        formularioBuscador.addComponent(tf);
+        
+        Button botonBuscar = new Button("Buscar Pelicula");
+        
+        formularioBuscador.addComponent(botonBuscar);
+        
+        botonBuscar.addClickListener(new Button.ClickListener(){
+            public void buttonClick(Button.ClickEvent event){
+                
+                String title = tf.getValue();
+                
+                
+                int movieId = getMovieIDByTitle(title,tabla);
+                
+                //We found the movie
+                if(movieId!=-1)
+                {
+                    tf.clear();
+                    String desc = "";
+                    String inf = "";
+                    String precio = tabla.getContainerProperty(movieId,"Precio por persona(€)").getValue().toString();
+                    String sesion = tabla.getContainerProperty(movieId,"Sesiones").getValue().toString();
+                    String sala = tabla.getContainerProperty(movieId,"Sala de Proyeccion").getValue().toString();
+
+                    desc = descPeliculas[movieId];
+                    inf = infPeliculas[movieId];
+
+                    tituloPelicula.setValue("<h1><b>Titulo</b>: "+title+"</h1>");
+                    precioPersona.setValue("<h3><b>Precio por persona(€)</b>: "+precio+"</h3>");
+                    salaProyeccion.setValue("<h3><b>Sala de Proyeccion</b>: "+sala+"</h3>");
+                    sesiones.setValue("<h3><b>Sesion</b>: "+sesion+"</h3>");
+                    masInf.setValue("<h3><b>Mas Informacion</b>: "+inf+"</h3>");
+                    sinopsis.setValue("<h3><b>Sinopsis</b>: "+desc+"</h3>");
+                }
+                else
+                {
+                    Notification.show("ERROR","No se ha encontrado una pelicula con ese titulo, por favor compruebe si hay errores en el titulo proporcionado.", Notification.Type.ERROR_MESSAGE);
+                }
+            }       
+        });
+        
+        Button botonCerrarDerecho = new Button("Pulsar para ocultar parte derecha de la pagina");
+        
+        botonCerrarDerecho.addClickListener(new Button.ClickListener(){
+            public void buttonClick(Button.ClickEvent event){
+                hsplit.setSplitPosition(100, Unit.PERCENTAGE);
+            }       
+        });
+        
+        Button botonAbrirDerecho = new Button("Pulsar para mostrar parte derecha de la pagina");
+        
+        botonAbrirDerecho.addClickListener(new Button.ClickListener(){
+            public void buttonClick(Button.ClickEvent event){
+                hsplit.setSplitPosition(45, Unit.PERCENTAGE);
+            }       
+        });
+        
 
         tabla.setPageLength(tabla.size());
         tabla.setImmediate(true);
         tabla.setSelectable(true);
-
+        
         layout.addComponent(titulo);
         layout.addComponent(explicacion);
         layout.addComponent(tabla);
+        layout.addComponent(buscador);
+        layout.addComponent(buscadorExp);
+        layout.addComponent(formularioBuscador);
+        layout.addComponent(botonAbrirDerecho);
         
         layout2.addComponent(tituloPelicula);
         layout2.addComponent(precioPersona);
@@ -108,11 +182,29 @@ public class Principal extends UI {
         layout2.addComponent(sesiones);
         layout2.addComponent(masInf);
         layout2.addComponent(sinopsis);
+        layout2.addComponent(botonCerrarDerecho);
         
         hsplit.setFirstComponent(layout);
         hsplit.setSecondComponent(layout2);
 
         setContent(hsplit);
+    }
+    
+    public int getMovieIDByTitle(String title, Table tabla)
+    {
+        int result = -1;
+        
+        for(int i=0;i<tabla.size();i++)
+        {
+            if(tabla.getContainerProperty(i,"Nombre de la pelicula").getValue().equals(title))
+            {
+                result=i;
+            }
+            
+        }
+        
+        
+        return result;
     }
 
     @WebServlet(urlPatterns = "/*", name = "PrincipalServlet", asyncSupported = true)

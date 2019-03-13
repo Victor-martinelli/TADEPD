@@ -5,7 +5,7 @@ import javax.servlet.annotation.WebServlet;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.event.ItemClickEvent;
-import com.vaadin.server.Page;
+
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -34,6 +34,8 @@ public class Principal extends UI {
     
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+        
+        movieId=1;
        //Pagina Principal
         final VerticalLayout layout = new VerticalLayout();
         

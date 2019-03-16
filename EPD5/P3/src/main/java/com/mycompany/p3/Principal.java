@@ -1,4 +1,4 @@
-package com.mycompany.p2;
+package com.mycompany.p3;
 
 import javax.servlet.annotation.WebServlet;
 

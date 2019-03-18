@@ -42,7 +42,7 @@ public class SesionEtiqueta extends UI {
         setContent(layout);
     }
 
-    @WebServlet(urlPatterns = "/SesionEtiqueta", name = "SesionEtiquetaServlet", asyncSupported = true)
+    @WebServlet(urlPatterns = "/SesionEtiqueta/*", name = "SesionEtiquetaServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = SesionEtiqueta.class, productionMode = false, heartbeatInterval = 10)
     public static class MyUIServlet extends VaadinServlet {
     }

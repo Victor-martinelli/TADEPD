@@ -39,6 +39,7 @@ public class SesionBoton extends UI {
         button.addClickListener( e -> {
            WrappedSession session = getSession().getSession();
            session.setAttribute("valorUsuario", name.getValue());
+           Page.getCurrent().setLocation("SesionEtiqueta");
         });
                 
         layout.addComponents(titulo, name, button);

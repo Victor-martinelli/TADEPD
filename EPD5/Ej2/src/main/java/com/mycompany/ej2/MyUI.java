@@ -4,15 +4,12 @@ import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -79,13 +76,13 @@ public class MyUI extends UI {
         
         layoutIzquierda.addComponent(tree);
         
-        Label detail = new Label("Details");
+        Label detail = new Label("<b>Details</b>",ContentMode.HTML);
         subLayoutArriba.addComponent(detail);
         
-        Label label1 = new Label("Where is the cat?");
+        Label label1 = new Label("<h1>Where is the cat?</h1>",ContentMode.HTML);
         subLayoutAbajo.addComponent(label1);
         
-        Label label2 = new Label(" I don't know!");
+        Label label2 = new Label("<h1>I don't know!</h1>",ContentMode.HTML);
         subLayoutAbajo.addComponent(label2);
         
         subPanelHorizontal.setFirstComponent(subLayoutArriba);

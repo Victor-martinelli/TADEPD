@@ -1,0 +1,2 @@
+use pruebaTAD
+db.users.remove( { user_id: /ind/ } )

@@ -46,12 +46,12 @@ public class MongoDBJDBC {
             BasicDBObject galaxy1 = new BasicDBObject();
             galaxy1.append("nombre", "Bubble");
             galaxy1.append("dorsal", "10");
-            galaxy1.append("fecha nacimiento", "11/09/1980");
+            galaxy1.append("fecha nacimiento", formatter.parse("11-09-1980"));
             
             BasicDBObject galaxy2 = new BasicDBObject();
             galaxy2.append("nombre", "Tank");
             galaxy2.append("dorsal", "20");
-            galaxy2.append("fecha nacimiento", "15/09/1979");
+            galaxy2.append("fecha nacimiento", formatter.parse("15-09-1979"));
             
             BasicDBList jugadoresGalaxy = new BasicDBList();
             jugadoresGalaxy.add(galaxy1);
@@ -83,6 +83,7 @@ public class MongoDBJDBC {
             cursor = collection.find();
             int i = 1;
             while (cursor.hasNext()) {
+
                 System.out.println("Documento leído: " + i);
                 System.out.println(cursor.next());
                 i++;

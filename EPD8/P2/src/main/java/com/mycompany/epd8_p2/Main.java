@@ -11,6 +11,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -24,6 +25,8 @@ public class Main {
     public static void main(String[] args) {
 
         try {
+            
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             // Conectar con mongodb server 
             MongoClient mongoClient = new MongoClient("localhost", 27017);
 
@@ -36,17 +39,17 @@ public class Main {
             BasicDBObject pasajero2 = new BasicDBObject();
             BasicDBObject pasajero3 = new BasicDBObject();
 
-            //Documento psajero 1
+            //Documento pasajero 1
             pasajero1.append("nombre", "Pepe");
             pasajero1.append("nacionalidad", "España");
             pasajero1.append("pasaporte", "123456789");
 
-            //Documento psajero 2
+            //Documento pasajero 2
             pasajero2.append("nombre", "Juan");
             pasajero2.append("nacionalidad", "España");
             pasajero2.append("pasaporte", "987654321");
 
-            //Documento psajero 3
+            //Documento pasajero 3
             pasajero3.append("nombre", "Ana");
             pasajero3.append("nacionalidad", "España");
             pasajero3.append("pasaporte", "456789123");
@@ -59,19 +62,19 @@ public class Main {
 
             //Crear documento revisiones
             BasicDBObject revi1 = new BasicDBObject();
-            revi1.append("fecha", "01/03/2019");
+            revi1.append("fecha", formatter.parse("01/03/2019"));
             revi1.append("resultado", "favorable");
 
             BasicDBObject revi2 = new BasicDBObject();
-            revi2.append("fecha", "04/02/2019");
+            revi2.append("fecha", formatter.parse("04/02/2019"));
             revi2.append("resultado", "favorable");
 
             BasicDBObject revi3 = new BasicDBObject();
-            revi3.append("fecha", "01/03/2018");
+            revi3.append("fecha", formatter.parse("01/03/2018"));
             revi3.append("resultado", "favorable");
 
             BasicDBObject revi4 = new BasicDBObject();
-            revi4.append("fecha", "04/02/2018");
+            revi4.append("fecha", formatter.parse("04/02/2018"));
             revi4.append("resultado", "favorable");
 
             BasicDBList revisiones1 = new BasicDBList();
@@ -125,7 +128,7 @@ public class Main {
             // Documento vuelo 2
             vuelo2.append("avion", avion2);
             vuelo2.append("origen", "Madrid");
-            vuelo2.append("destino", "Aleania");
+            vuelo2.append("destino", "Alemania");
             
             BasicDBList listPasajeros2 = new BasicDBList();
             listPasajeros2.add(pasajero3);
@@ -158,7 +161,7 @@ public class Main {
 
             switch (opc) {
                 case "1":
-                    System.out.println(buscarPasageros(collectionPasajeros));
+                    System.out.println(buscarPasajeros(collectionPasajeros));
                     break;
                 case "2":
                     System.out.println(buscarAviones(collectionAviones));
@@ -171,7 +174,7 @@ public class Main {
         } while (!"0".equals(opc));
     }
 
-    private static String buscarPasageros(DBCollection collectionPasajeros) {
+    private static String buscarPasajeros(DBCollection collectionPasajeros) {
         String resultado = "";
         DBCursor cursor = collectionPasajeros.find();
 

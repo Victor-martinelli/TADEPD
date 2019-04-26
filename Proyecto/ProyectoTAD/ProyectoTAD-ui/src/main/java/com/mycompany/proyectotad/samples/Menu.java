@@ -3,9 +3,9 @@ package com.mycompany.proyectotad.samples;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
@@ -47,6 +47,7 @@ public class Menu extends CssLayout {
         final HorizontalLayout top = new HorizontalLayout();
         top.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
         top.addStyleName(ValoTheme.MENU_TITLE);
+        top.setSpacing(true);
         Label title = new Label("My CRUD");
         title.addStyleName(ValoTheme.LABEL_H3);
         title.setSizeUndefined();
@@ -58,7 +59,7 @@ public class Menu extends CssLayout {
 
         // logout menu item
         MenuBar logoutMenu = new MenuBar();
-        logoutMenu.addItem("Logout", VaadinIcons.SIGN_OUT, new Command() {
+        logoutMenu.addItem("Logout", FontAwesome.SIGN_OUT, new Command() {
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
@@ -84,7 +85,7 @@ public class Menu extends CssLayout {
         showMenu.addStyleName(ValoTheme.BUTTON_PRIMARY);
         showMenu.addStyleName(ValoTheme.BUTTON_SMALL);
         showMenu.addStyleName(VALO_MENU_TOGGLE);
-        showMenu.setIcon(VaadinIcons.MENU);
+        showMenu.setIcon(FontAwesome.NAVICON);
         menuPart.addComponent(showMenu);
 
         // container for the navigation buttons, which are added by addView()

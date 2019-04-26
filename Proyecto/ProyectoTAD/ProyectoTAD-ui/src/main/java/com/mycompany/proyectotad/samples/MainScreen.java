@@ -4,9 +4,9 @@ import com.mycompany.proyectotad.MyUI;
 import com.mycompany.proyectotad.samples.about.AboutView;
 import com.mycompany.proyectotad.samples.crud.SampleCrudView;
 
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 
@@ -20,7 +20,6 @@ public class MainScreen extends HorizontalLayout {
 
     public MainScreen(MyUI ui) {
 
-        setSpacing(false);
         setStyleName("main-screen");
 
         CssLayout viewContainer = new CssLayout();
@@ -31,9 +30,9 @@ public class MainScreen extends HorizontalLayout {
         navigator.setErrorView(ErrorView.class);
         menu = new Menu(navigator);
         menu.addView(new SampleCrudView(), SampleCrudView.VIEW_NAME,
-                SampleCrudView.VIEW_NAME, VaadinIcons.EDIT);
+                SampleCrudView.VIEW_NAME, FontAwesome.EDIT);
         menu.addView(new AboutView(), AboutView.VIEW_NAME, AboutView.VIEW_NAME,
-                VaadinIcons.INFO_CIRCLE);
+                FontAwesome.INFO_CIRCLE);
 
         navigator.addViewChangeListener(viewChangeListener);
 

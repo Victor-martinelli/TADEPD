@@ -1,22 +1,25 @@
 package com.mycompany.proyectotad.samples.crud;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.Collection;
-import java.util.Locale;
 
-import com.mycompany.proyectotad.samples.AttributeExtension;
+import com.mycompany.proyectotad.samples.backend.DataService;
 import com.mycompany.proyectotad.samples.backend.data.Availability;
 import com.mycompany.proyectotad.samples.backend.data.Category;
 import com.mycompany.proyectotad.samples.backend.data.Product;
 
-import com.vaadin.data.BeanValidationBinder;
-import com.vaadin.data.Binder;
-import com.vaadin.data.Result;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.data.ValueContext;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitEvent;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitHandler;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.server.Page;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Field;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 
 /**
  * A form for editing a single product.
@@ -28,104 +31,114 @@ import com.vaadin.server.Page;
 public class ProductForm extends ProductFormDesign {
 
     private SampleCrudLogic viewLogic;
-    private Binder<Product> binder;
-    private Product currentProduct;
-
-    private static class StockPriceConverter extends StringToIntegerConverter {
-
-        public StockPriceConverter() {
-            super("Could not convert value to " + Integer.class.getName());
-        }
-
-        @Override
-        protected NumberFormat getFormat(Locale locale) {
-            // do not use a thousands separator, as HTML5 input type
-            // number expects a fixed wire/DOM number format regardless
-            // of how the browser presents it to the user (which could
-            // depend on the browser locale)
-            DecimalFormat format = new DecimalFormat();
-            format.setMaximumFractionDigits(0);
-            format.setDecimalSeparatorAlwaysShown(false);
-            format.setParseIntegerOnly(true);
-            format.setGroupingUsed(false);
-            return format;
-        }
-
-        @Override
-        public Result<Integer> convertToModel(String value,
-                ValueContext context) {
-            Result<Integer> result = super.convertToModel(value, context);
-            return result.map(stock -> stock == null ? 0 : stock);
-        }
-
-    }
+    private BeanFieldGroup<Product> fieldGroup;
 
     public ProductForm(SampleCrudLogic sampleCrudLogic) {
         super();
         addStyleName("product-form");
         viewLogic = sampleCrudLogic;
 
-        // Mark the stock count field as numeric.
-        // This affects the virtual keyboard shown on mobile devices.
-        AttributeExtension stockFieldExtension = new AttributeExtension();
-        stockFieldExtension.extend(stockCount);
-        stockFieldExtension.setAttribute("type", "number");
+        price.setConverter(new EuroConverter());
 
-        availability.setItems(Availability.values());
-        availability.setEmptySelectionAllowed(false);
+        for (Availability s : Availability.values()) {
+            availability.addItem(s);
+        }
 
-        binder = new BeanValidationBinder<>(Product.class);
-        binder.forField(price).withConverter(new EuroConverter())
-                .bind("price");
-        binder.forField(stockCount).withConverter(new StockPriceConverter())
-                .bind("stockCount");
+        fieldGroup = new BeanFieldGroup<Product>(Product.class);
+        fieldGroup.bindMemberFields(this);
 
-        category.setItemCaptionGenerator(Category::getName);
-        binder.forField(category).bind("category");
-        binder.bindInstanceFields(this);
+        // perform validation and enable/disable buttons while editing
+        ValueChangeListener valueListener = new ValueChangeListener() {
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                formHasChanged();
+            }
+        };
+        for (Field f : fieldGroup.getFields()) {
+            f.addValueChangeListener(valueListener);
+        }
 
-        // enable/disable save button while editing
-        binder.addStatusChangeListener(event -> {
-            boolean isValid = !event.hasValidationErrors();
-            boolean hasChanges = binder.hasChanges();
-            save.setEnabled(hasChanges && isValid);
-            discard.setEnabled(hasChanges);
-        });
+        fieldGroup.addCommitHandler(new CommitHandler() {
 
-        save.addClickListener(event -> {
-            if (currentProduct != null
-                    && binder.writeBeanIfValid(currentProduct)) {
-                viewLogic.saveProduct(currentProduct);
+            @Override
+            public void preCommit(CommitEvent commitEvent)
+                    throws CommitException {
+            }
+
+            @Override
+            public void postCommit(CommitEvent commitEvent)
+                    throws CommitException {
+                DataService.get().updateProduct(
+                        fieldGroup.getItemDataSource().getBean());
             }
         });
 
-        discard.addClickListener(
-                event -> viewLogic.editProduct(currentProduct));
+        save.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                try {
+                    fieldGroup.commit();
 
-        cancel.addClickListener(event -> viewLogic.cancelProduct());
+                    // only if validation succeeds
+                    Product product = fieldGroup.getItemDataSource().getBean();
+                    viewLogic.saveProduct(product);
+                } catch (CommitException e) {
+                    Notification n = new Notification(
+                            "Please re-check the fields", Type.ERROR_MESSAGE);
+                    n.setDelayMsec(500);
+                    n.show(getUI().getPage());
+                }
+            }
+        });
 
-        delete.addClickListener(event -> {
-            if (currentProduct != null) {
-                viewLogic.deleteProduct(currentProduct);
+        cancel.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                viewLogic.cancelProduct();
+            }
+        });
+
+        delete.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                Product product = fieldGroup.getItemDataSource().getBean();
+                viewLogic.deleteProduct(product);
             }
         });
     }
 
     public void setCategories(Collection<Category> categories) {
-        category.setItems(categories);
+        category.setOptions(categories);
     }
 
     public void editProduct(Product product) {
         if (product == null) {
             product = new Product();
         }
-        currentProduct = product;
-        binder.readBean(product);
+        fieldGroup.setItemDataSource(new BeanItem<Product>(product));
+
+        // before the user makes any changes, disable validation error indicator
+        // of the product name field (which may be empty)
+        productName.setValidationVisible(false);
 
         // Scroll to the top
         // As this is not a Panel, using JavaScript
         String scrollScript = "window.document.getElementById('" + getId()
                 + "').scrollTop = 0;";
         Page.getCurrent().getJavaScript().execute(scrollScript);
+    }
+
+    private void formHasChanged() {
+        // show validation errors after the user has changed something
+        productName.setValidationVisible(true);
+
+        // only products that have been saved should be removable
+        boolean canRemoveProduct = false;
+        BeanItem<Product> item = fieldGroup.getItemDataSource();
+        if (item != null) {
+            Product product = item.getBean();
+            canRemoveProduct = product.getId() != -1;
+        }
+        delete.setEnabled(canRemoveProduct);
     }
 }

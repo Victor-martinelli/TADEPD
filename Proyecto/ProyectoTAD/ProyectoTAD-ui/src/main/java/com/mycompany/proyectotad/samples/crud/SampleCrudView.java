@@ -1,15 +1,23 @@
 package com.mycompany.proyectotad.samples.crud;
 
+import java.util.Collection;
+
 import com.mycompany.proyectotad.samples.ResetButtonForTextField;
 import com.mycompany.proyectotad.samples.backend.DataService;
 import com.mycompany.proyectotad.samples.backend.data.Product;
 
-import com.vaadin.icons.VaadinIcons;
+import com.vaadin.event.FieldEvents;
+import com.vaadin.event.SelectionEvent;
+import com.vaadin.event.SelectionEvent.SelectionListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Grid.SelectionModel;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -28,12 +36,9 @@ public class SampleCrudView extends CssLayout implements View {
     public static final String VIEW_NAME = "Inventory";
     private ProductGrid grid;
     private ProductForm form;
-    private TextField filter;
 
     private SampleCrudLogic viewLogic = new SampleCrudLogic(this);
     private Button newProduct;
-
-    private ProductDataProvider dataProvider = new ProductDataProvider();
 
     public SampleCrudView() {
         setSizeFull();
@@ -41,9 +46,13 @@ public class SampleCrudView extends CssLayout implements View {
         HorizontalLayout topLayout = createTopBar();
 
         grid = new ProductGrid();
-        grid.setDataProvider(dataProvider);
-        grid.asSingleSelect().addValueChangeListener(
-                event -> viewLogic.rowSelected(event.getValue()));
+        grid.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void select(SelectionEvent event) {
+                viewLogic.rowSelected(grid.getSelectedRow());
+            }
+        });
 
         form = new ProductForm(viewLogic);
         form.setCategories(DataService.get().getAllCategories());
@@ -51,6 +60,8 @@ public class SampleCrudView extends CssLayout implements View {
         VerticalLayout barAndGridLayout = new VerticalLayout();
         barAndGridLayout.addComponent(topLayout);
         barAndGridLayout.addComponent(grid);
+        barAndGridLayout.setMargin(true);
+        barAndGridLayout.setSpacing(true);
         barAndGridLayout.setSizeFull();
         barAndGridLayout.setExpandRatio(grid, 1);
         barAndGridLayout.setStyleName("crud-main-layout");
@@ -62,19 +73,30 @@ public class SampleCrudView extends CssLayout implements View {
     }
 
     public HorizontalLayout createTopBar() {
-        filter = new TextField();
+        TextField filter = new TextField();
         filter.setStyleName("filter-textfield");
-        filter.setPlaceholder("Filter name, availability or category");
+        filter.setInputPrompt("Filter");
         ResetButtonForTextField.extend(filter);
-        // Apply the filter to grid's data provider. TextField value is never null
-        filter.addValueChangeListener(event -> dataProvider.setFilter(event.getValue()));
+        filter.setImmediate(true);
+        filter.addTextChangeListener(new FieldEvents.TextChangeListener() {
+            @Override
+            public void textChange(FieldEvents.TextChangeEvent event) {
+                grid.setFilter(event.getText());
+            }
+        });
 
         newProduct = new Button("New product");
         newProduct.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        newProduct.setIcon(VaadinIcons.PLUS_CIRCLE);
-        newProduct.addClickListener(click -> viewLogic.newProduct());
+        newProduct.setIcon(FontAwesome.PLUS_CIRCLE);
+        newProduct.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                viewLogic.newProduct();
+            }
+        });
 
         HorizontalLayout topLayout = new HorizontalLayout();
+        topLayout.setSpacing(true);
         topLayout.setWidth("100%");
         topLayout.addComponent(filter);
         topLayout.addComponent(newProduct);
@@ -102,24 +124,15 @@ public class SampleCrudView extends CssLayout implements View {
     }
 
     public void clearSelection() {
-        grid.getSelectionModel().deselectAll();
+        grid.getSelectionModel().reset();
     }
 
     public void selectRow(Product row) {
-        grid.getSelectionModel().select(row);
+        ((SelectionModel.Single) grid.getSelectionModel()).select(row);
     }
 
     public Product getSelectedRow() {
         return grid.getSelectedRow();
-    }
-
-    public void updateProduct(Product product) {
-        dataProvider.save(product);
-        // FIXME: Grid used to scroll to the updated item
-    }
-
-    public void removeProduct(Product product) {
-        dataProvider.delete(product);
     }
 
     public void editProduct(Product product) {
@@ -132,4 +145,18 @@ public class SampleCrudView extends CssLayout implements View {
         }
         form.editProduct(product);
     }
+
+    public void showProducts(Collection<Product> products) {
+        grid.setProducts(products);
+    }
+
+    public void refreshProduct(Product product) {
+        grid.refresh(product);
+        grid.scrollTo(product);
+    }
+
+    public void removeProduct(Product product) {
+        grid.remove(product);
+    }
+
 }

@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
-import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -74,20 +74,20 @@ public class LoginScreen extends CssLayout {
         username.setWidth(15, Unit.EM);
         loginForm.addComponent(password = new PasswordField("Contraseña"));
         password.setWidth(15, Unit.EM);
-        
+
         HorizontalLayout buttonsArea = new HorizontalLayout();
         buttonsArea.setSpacing(true);
         loginForm.addComponent(buttonsArea);
-        
+
         CssLayout buttons = new CssLayout();
         buttons.setStyleName("buttons");
         loginForm.addComponent(buttons);
-        
+
         buttonsArea.addComponent(login = new Button("Login"));
         login.setDisableOnClick(true);
         buttonsArea.addComponent(register = new Button("Registro"));
         buttonsArea.addComponent(buttons);
-        
+
         // Venta de registro
         final Window window = new Window();
         window.setWidth(300, Unit.PIXELS);
@@ -122,7 +122,7 @@ public class LoginScreen extends CssLayout {
         content.setComponentAlignment(signUp, Alignment.MIDDLE_CENTER);
 
         window.setContent(content);
-        
+
         login.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -133,7 +133,7 @@ public class LoginScreen extends CssLayout {
                 }
             }
         });
-        
+
         register.addClickListener((event) -> {
             this.getUI().getUI().addWindow(window);
         });
@@ -147,7 +147,7 @@ public class LoginScreen extends CssLayout {
             // TODO: Añadir nuevo usuario
             this.getUI().getUI().removeWindow(window);
         });
-        
+
         login.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         login.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 

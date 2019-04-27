@@ -28,7 +28,11 @@ public class MainScreen extends HorizontalLayout {
         navigator.setErrorView(ErrorView.class);
         menu = new Menu(navigator);
         
-        menu.addView(new VideoPanel(), "","test",FontAwesome.EDIT);
+        menu.addView(new VideoPanel("mikehunt","despacito2"), "","test",FontAwesome.MALE);
+        
+        
+        
+        
         
         /*
         

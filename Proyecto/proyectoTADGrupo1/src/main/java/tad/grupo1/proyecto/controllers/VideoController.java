@@ -5,10 +5,20 @@
  */
 package tad.grupo1.proyecto.controllers;
 
+import tad.grupo1.proyecto.DAO.DAO;
+
 /**
  *
  * @author Portatil
  */
 public class VideoController {
+    
+    DAO dao = new DAO();
+    
+    public String getVideo(String username,String title)
+    {
+        return dao.getVideoPath(username,title);
+    }
+    
     
 }

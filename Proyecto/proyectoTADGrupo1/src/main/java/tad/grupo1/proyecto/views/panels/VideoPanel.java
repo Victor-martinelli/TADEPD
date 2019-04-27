@@ -7,9 +7,14 @@ package tad.grupo1.proyecto.views.panels;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FileResource;
+import com.vaadin.server.Resource;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Video;
+import java.io.File;
+import tad.grupo1.proyecto.controllers.VideoController;
 
 /**
  *
@@ -18,14 +23,29 @@ import com.vaadin.ui.Label;
 public class VideoPanel extends CssLayout implements View{
 
     
-    public VideoPanel()
+    VideoController vc = new VideoController();
+    
+    public VideoPanel(String username,String videoTitle)
     {
+        Video sample = new Video();
         setSizeFull();
-        HorizontalSplitPanel mainLayout = new HorizontalSplitPanel();
         
-        mainLayout.addComponent(new Label("REEEEEEEEEEEEEEE"));
+        final Resource mp4Resource = new FileResource(
+                new File(vc.getVideo(username, videoTitle)));
+        sample.setSource(mp4Resource);
+        sample.setSizeFull();
+        sample.setHtmlContentAllowed(true);
+        sample.setWidth("640px");
+        sample.setHeight("320px");
+        sample.setAltText("Can't play media");
+        
+        
+        
+        addComponent(sample);
         
     }
+    
+    
     
     
     

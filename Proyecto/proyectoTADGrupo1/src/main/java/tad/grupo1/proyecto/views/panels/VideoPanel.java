@@ -10,14 +10,18 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
+import com.vaadin.shared.ui.PreloadMode;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Video;
 import java.io.File;
+import org.vaadin.gwtav.GwtVideo;
 import tad.grupo1.proyecto.controllers.VideoController;
 
 /**
@@ -32,7 +36,14 @@ public class VideoPanel extends CssLayout implements View{
     public VideoPanel(String username,String videoTitle)
     {
         
+        VerticalSplitPanel root = new VerticalSplitPanel();
+        
+        root.setSizeFull();
+        
+        root.setSizeFull();
+        
         VerticalLayout content = new VerticalLayout();
+        
         
         Label videoTitleLabel = new Label("<h1>"+videoTitle+"</h1>",ContentMode.HTML);
         
@@ -43,24 +54,24 @@ public class VideoPanel extends CssLayout implements View{
         videoTitleLabel.setWidth(null);
         
         
-        Video sample = new Video();
-        //setSizeFull();
+        GwtVideo sample = new GwtVideo();
+        sample.setPreload(PreloadMode.NONE);
         
         final Resource mp4Resource = new FileResource(
                 new File(vc.getVideo(username, videoTitle)));
         sample.setSource(mp4Resource);
-        
-        //sample.setResponsive(true);
+        sample.setSizeUndefined();
+        sample.setResponsive(true);
         sample.setHtmlContentAllowed(true);
         sample.setShowControls(true);
-        sample.setWidth("480px");
-        sample.setHeight("360px");
+        sample.setWidth("1080px");
         //Esto es para que el size se quede el indicado y no el del video
-        //sample.setStyleName("v-video");
+        //content.setStyleName("v-video");
         sample.setAltText("Can't play media");
         
-        sample.setPoster(new FileResource(
-                new File(vc.getVideoThumbnail(username, videoTitle))));
+        /*
+        sample.ssetPoster(new FileResource(
+                new File(vc.getVideoThumbnail(username, videoTitle)))); */
         
         
         content.addComponents(videoTitleLabel,sample,viewsLabel);
@@ -69,8 +80,9 @@ public class VideoPanel extends CssLayout implements View{
         //content.setComponentAlignment(videoTitleLabel, Alignment.MIDDLE_CENTER);
         //content.setComponentAlignment(sample, Alignment.MIDDLE_CENTER);
         
+        root.addComponent(content);
         
-        addComponent(content);
+        addComponent(root);
         
     }
     

@@ -26,9 +26,9 @@ public class VideoController {
     }
     
     
-    public int getVideoViews()
+    public int getVideoViews(String title)
     {
-        
+        return dao.getVideoViews(title);
     }
     
     

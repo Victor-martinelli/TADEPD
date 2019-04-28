@@ -2,9 +2,11 @@ package com.mycompany.connectazurebluemix;
 
 
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import javax.servlet.annotation.WebServlet;
@@ -48,12 +50,28 @@ public class MyUI extends UI {
         DB db = mongoClient.getDB("test");
         layout.addComponent(new Label("Connected"));
         DBCollection collection = db.getCollection("test");
+        /*
+        
         cursor = collection.find();
         int i = 1;
         while (cursor.hasNext()) {
-            layout.addComponent(new Label("Documento Leido "+i+cursor.next()));
+            
+            DBObject current = cursor.next();
+            current.put("text","REEEEEEEEEEEEEE");
+            //layout.addComponent(new Label("Documento Leido "+i+cursor.next()));
             i++;
         }
+        
+        cursor.close();
+
+        */
+        
+        BasicDBObject newDocument = new BasicDBObject();
+	newDocument.put("text", "REEEEEEEEEEEEEEEE");
+        
+        BasicDBObject searchQuery = new BasicDBObject().append("text", "this is a test string");
+
+	collection.update(searchQuery, newDocument);
         
 
         layout.setMargin(true);

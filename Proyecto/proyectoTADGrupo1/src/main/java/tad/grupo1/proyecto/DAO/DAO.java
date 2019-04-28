@@ -5,12 +5,19 @@
  */
 package tad.grupo1.proyecto.DAO;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Filters.eq;
 import com.vaadin.server.VaadinService;
 import java.io.File;
+import java.util.Iterator;
 
 
 public class DAO {
@@ -42,9 +49,40 @@ public class DAO {
     }
     
     
-    public int getVideoViews()
+    public int getVideoViews(String title)
     {
+        DBCollection collection = this.getDatabaseCollection();
         
+        int result=1;
+        
+        BasicDBObject whereQuery = new BasicDBObject();
+        //Donde el titulo sea el buscado
+	whereQuery.put("videos.title",title);
+        
+        //Resultado de la buscada
+	DBCursor cursor = collection.find(whereQuery);
+        
+        //Solamente queda coger el resultado
+	while(cursor.hasNext()) {
+	    DBObject current = cursor.next();
+            
+            //Cogemos todos sus videos
+                BasicDBList currentVideos = (BasicDBList) current.get("videos");
+                
+                //Iteramos sobre ellos
+                Iterator it = currentVideos.iterator();
+                while(it.hasNext())
+                {
+                    DBObject currentVideo = (DBObject) it.next();
+                    result=(int) currentVideo.get("views");
+                }
+                
+            
+	}
+        
+        cursor.close();
+       
+        return result;
     }
     
     

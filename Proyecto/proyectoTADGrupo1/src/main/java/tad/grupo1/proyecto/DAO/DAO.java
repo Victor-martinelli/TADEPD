@@ -33,9 +33,19 @@ public class DAO {
     
     public String getVideoPath(String username,String title)
     {
-        return basepath+File.separator+"users"+File.separator+username+File.separator+"videos"+File.separator+title+".mp4";
+        return basepath+File.separator+"users"+File.separator+username+File.separator+"videos"+File.separator+title+File.separator+title+".mp4";
     }
     
+    public String getVideoThumbnailPath(String username,String title)
+    {
+        return basepath+File.separator+"users"+File.separator+username+File.separator+"videos"+File.separator+title+File.separator+"thumb.png";
+    }
+    
+    
+    public int getVideoViews()
+    {
+        
+    }
     
     
 }

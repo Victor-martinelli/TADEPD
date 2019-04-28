@@ -20,5 +20,16 @@ public class VideoController {
         return dao.getVideoPath(username,title);
     }
     
+    public String getVideoThumbnail(String username,String title)
+    {
+        return dao.getVideoThumbnailPath(username,title);
+    }
+    
+    
+    public int getVideoViews()
+    {
+        
+    }
+    
     
 }

@@ -42,12 +42,12 @@ public class VideoPanel extends CssLayout implements View{
         
         VerticalLayout content = new VerticalLayout();
 
-        content.setSizeFull();
+        //content.setSizeFull();
         
         
         Label videoTitleLabel = new Label("<h1>"+videoTitle+"</h1>",ContentMode.HTML);
         
-       // Label viewsLabel = new Label("<h2>"+vc.getVideoViews(videoTitle)+" views</h2>",ContentMode.HTML);
+        Label viewsLabel = new Label("<h2>"+vc.getVideoViews(videoTitle)+" views</h2>",ContentMode.HTML);
         
         content.setMargin(true);
 
@@ -65,8 +65,6 @@ public class VideoPanel extends CssLayout implements View{
         sample.setHtmlContentAllowed(true);
         sample.setShowControls(true);
         sample.setWidth("100%");
-        //Esto es para que el size se quede el indicado y no el del video
-        //content.setStyleName("v-video");
         sample.setAltText("Can't play media");
         
         /*
@@ -74,11 +72,11 @@ public class VideoPanel extends CssLayout implements View{
                 new File(vc.getVideoThumbnail(username, videoTitle)))); */
         
         
-        //content.addComponents(videoTitleLabel,sample,viewsLabel);
+        content.addComponents(videoTitleLabel,sample,viewsLabel);
         
         
         
-        content.addComponents(videoTitleLabel,new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"));
+        //content.addComponents(videoTitleLabel,new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"));
         
         
         

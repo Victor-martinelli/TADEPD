@@ -18,20 +18,6 @@ public class MainScreen extends HorizontalLayout {
 
     public MainScreen(MainUI ui) {
 
-        //setStyleName("main-screen");
-
-        //CssLayout viewContainer = new CssLayout();
-        //viewContainer.addStyleName("valo-content");
-        //viewContainer.setSizeFull();
-
-        //final Navigator navigator = new Navigator(ui, viewContainer);
-        //navigator.setErrorView(ErrorView.class);
-        //menu = new Menu(navigator);
-        
-        //menu.addView(new VideoPanel("mikehunt","despacito2"), "","test",FontAwesome.MALE);
-        
-        
-        
         
         
         /*
@@ -47,12 +33,13 @@ public class MainScreen extends HorizontalLayout {
 
         */
 
-        //navigator.addViewChangeListener(viewChangeListener);
+        VideoPanel videoContainer = new VideoPanel("mikehunt","despacito2");
+        
+        HorizontalLayout page = new HorizontalLayout(new Menu(),videoContainer); 
+        
 
-        //addComponent(menu);
-        addComponent(new VideoPanel("mikehunt","despacito2"));
-        //setExpandRatio(viewContainer, 1);
-        //setSizeFull();
+        addComponent(page);
+        //addComponent(videoContainer);
     }
 
     // notify the view menu about view changes so that it can display which view
@@ -62,11 +49,6 @@ public class MainScreen extends HorizontalLayout {
         @Override
         public boolean beforeViewChange(ViewChangeListener.ViewChangeEvent event) {
             return true;
-        }
-
-        @Override
-        public void afterViewChange(ViewChangeListener.ViewChangeEvent event) {
-            menu.setActiveView(event.getViewName());
         }
 
     };

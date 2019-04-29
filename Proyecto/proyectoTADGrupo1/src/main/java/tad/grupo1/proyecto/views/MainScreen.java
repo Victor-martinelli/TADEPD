@@ -19,7 +19,6 @@ public class MainScreen extends HorizontalLayout {
     public MainScreen(MainUI ui) {
 
         
-        
         /*
         
         CAMBIAR ESTO A LA PAGINA DE INICIO, POR AHORA PARA TESTEAR

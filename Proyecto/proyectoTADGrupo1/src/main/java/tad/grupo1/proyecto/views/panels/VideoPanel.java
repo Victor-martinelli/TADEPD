@@ -50,7 +50,9 @@ public class VideoPanel extends CssLayout implements View{
         
         Label viewsLabel = new Label("<h2>"+vc.getVideoViews(videoTitle)+" views</h2>",ContentMode.HTML);
         
-        content.setMargin(true);
+        content.setMargin(false);
+        content.setSpacing(false);
+        //content.setStyleName("centering-layout");
 
         videoTitleLabel.setWidth(null);
         
@@ -65,9 +67,9 @@ public class VideoPanel extends CssLayout implements View{
         sample.setResponsive(true);
         sample.setHtmlContentAllowed(true);
         sample.setShowControls(true);
-        sample.setWidth("100em");
+        //sample.setWidth("100em");
         //sample.setWidth("100%");
-        //sample.setWidth("1080px");
+        sample.setWidth("1080px");
         sample.setAltText("Can't play media");
         
         /*
@@ -77,18 +79,21 @@ public class VideoPanel extends CssLayout implements View{
         
         content.addComponents(videoTitleLabel,sample,viewsLabel);
         
-        Responsive.makeResponsive(content);
+        //Responsive.makeResponsive(content);
         
-        content.setStyleName("responsive");
+        //sample.setStyleName("responsive");
         
-        Responsive.makeResponsive(content);
+        //content.setStyleName("responsive");
+        
+        //Responsive.makeResponsive(content);
+        //Responsive.makeResponsive(sample);
         
         
         //content.addComponents(videoTitleLabel,new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"));
         
         
         
-        //content.setComponentAlignment(videoTitleLabel, Alignment.MIDDLE_CENTER);
+       // content.setComponentAlignment(videoTitleLabel, Alignment.MIDDLE_CENTER);
         //content.setComponentAlignment(sample, Alignment.MIDDLE_CENTER);
         
         //root.addComponent(content);

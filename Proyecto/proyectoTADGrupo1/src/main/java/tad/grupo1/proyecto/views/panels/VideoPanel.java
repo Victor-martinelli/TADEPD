@@ -9,6 +9,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
+import com.vaadin.server.Responsive;
 import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ContentMode;
@@ -42,7 +43,7 @@ public class VideoPanel extends CssLayout implements View{
         
         VerticalLayout content = new VerticalLayout();
 
-        //content.setSizeFull();
+        content.setSizeFull();
         
         
         Label videoTitleLabel = new Label("<h1>"+videoTitle+"</h1>",ContentMode.HTML);
@@ -64,7 +65,9 @@ public class VideoPanel extends CssLayout implements View{
         sample.setResponsive(true);
         sample.setHtmlContentAllowed(true);
         sample.setShowControls(true);
-        sample.setWidth("100%");
+        sample.setWidth("100em");
+        //sample.setWidth("100%");
+        //sample.setWidth("1080px");
         sample.setAltText("Can't play media");
         
         /*
@@ -74,6 +77,11 @@ public class VideoPanel extends CssLayout implements View{
         
         content.addComponents(videoTitleLabel,sample,viewsLabel);
         
+        Responsive.makeResponsive(content);
+        
+        content.setStyleName("responsive");
+        
+        Responsive.makeResponsive(content);
         
         
         //content.addComponents(videoTitleLabel,new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"));

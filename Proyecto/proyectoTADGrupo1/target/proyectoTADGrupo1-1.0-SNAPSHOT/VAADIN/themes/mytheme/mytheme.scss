@@ -347,16 +347,26 @@ $v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
         text-align: right;
     }
 
-
-    .v-video {
-        max-height:   100%!important;
-        max-width:    100%!important;
-
-        height:       100%!important;
-        width:        100%!important;
-    }
-
-
+    .v-csslayout.responsive {
+   &[width-range~="0-300px"] {
+     // Styles for the layout when its width is between 0 and 300 pixels
+   }
+   &[width-range~="301-500px"] {
+     // Styles for the layout when its width is between 301 and 500 pixels
+   }
+   &[width-range~="501px-"] {
+     // Styles for the layout when its width is over 500 pixels
+   }
+   &[height-range~="0-300px"] {
+     // Styles for the layout when its height is between 0 and 300 pixels
+   }
+   &[height-range~="301-500px"] {
+     // Styles for the layout when its height is between 301 and 500 pixels
+   }
+   &[height-range~="501-"] {
+     // Styles for the layout when its height is over 500 pixels
+   }
+ }
 
 
 

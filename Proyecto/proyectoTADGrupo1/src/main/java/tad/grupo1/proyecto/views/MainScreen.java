@@ -18,17 +18,17 @@ public class MainScreen extends HorizontalLayout {
 
     public MainScreen(MainUI ui) {
 
-        setStyleName("main-screen");
+        //setStyleName("main-screen");
 
-        CssLayout viewContainer = new CssLayout();
-        viewContainer.addStyleName("valo-content");
-        viewContainer.setSizeFull();
+        //CssLayout viewContainer = new CssLayout();
+        //viewContainer.addStyleName("valo-content");
+        //viewContainer.setSizeFull();
 
-        final Navigator navigator = new Navigator(ui, viewContainer);
-        navigator.setErrorView(ErrorView.class);
-        menu = new Menu(navigator);
+        //final Navigator navigator = new Navigator(ui, viewContainer);
+        //navigator.setErrorView(ErrorView.class);
+        //menu = new Menu(navigator);
         
-        menu.addView(new VideoPanel("mikehunt","despacito2"), "","test",FontAwesome.MALE);
+        //menu.addView(new VideoPanel("mikehunt","despacito2"), "","test",FontAwesome.MALE);
         
         
         
@@ -47,12 +47,12 @@ public class MainScreen extends HorizontalLayout {
 
         */
 
-        navigator.addViewChangeListener(viewChangeListener);
+        //navigator.addViewChangeListener(viewChangeListener);
 
-        addComponent(menu);
-        addComponent(viewContainer);
-        setExpandRatio(viewContainer, 1);
-        setSizeFull();
+        //addComponent(menu);
+        addComponent(new VideoPanel("mikehunt","despacito2"));
+        //setExpandRatio(viewContainer, 1);
+        //setSizeFull();
     }
 
     // notify the view menu about view changes so that it can display which view
@@ -60,12 +60,12 @@ public class MainScreen extends HorizontalLayout {
     ViewChangeListener viewChangeListener = new ViewChangeListener() {
 
         @Override
-        public boolean beforeViewChange(ViewChangeEvent event) {
+        public boolean beforeViewChange(ViewChangeListener.ViewChangeEvent event) {
             return true;
         }
 
         @Override
-        public void afterViewChange(ViewChangeEvent event) {
+        public void afterViewChange(ViewChangeListener.ViewChangeEvent event) {
             menu.setActiveView(event.getViewName());
         }
 

@@ -9,6 +9,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
+import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -36,18 +37,17 @@ public class VideoPanel extends CssLayout implements View{
     public VideoPanel(String username,String videoTitle)
     {
         
-        VerticalSplitPanel root = new VerticalSplitPanel();
         
-        root.setSizeFull();
-        
-        root.setSizeFull();
+        //root.setSizeFull();
         
         VerticalLayout content = new VerticalLayout();
+
+        content.setSizeFull();
         
         
         Label videoTitleLabel = new Label("<h1>"+videoTitle+"</h1>",ContentMode.HTML);
         
-        Label viewsLabel = new Label("<h2>"+vc.getVideoViews(videoTitle)+" views</h2>",ContentMode.HTML);
+       // Label viewsLabel = new Label("<h2>"+vc.getVideoViews(videoTitle)+" views</h2>",ContentMode.HTML);
         
         content.setMargin(true);
 
@@ -60,11 +60,11 @@ public class VideoPanel extends CssLayout implements View{
         final Resource mp4Resource = new FileResource(
                 new File(vc.getVideo(username, videoTitle)));
         sample.setSource(mp4Resource);
-        sample.setSizeUndefined();
+        //sample.setSizeUndefined();
         sample.setResponsive(true);
         sample.setHtmlContentAllowed(true);
         sample.setShowControls(true);
-        sample.setWidth("1080px");
+        sample.setWidth("100%");
         //Esto es para que el size se quede el indicado y no el del video
         //content.setStyleName("v-video");
         sample.setAltText("Can't play media");
@@ -74,15 +74,20 @@ public class VideoPanel extends CssLayout implements View{
                 new File(vc.getVideoThumbnail(username, videoTitle)))); */
         
         
-        content.addComponents(videoTitleLabel,sample,viewsLabel);
+        //content.addComponents(videoTitleLabel,sample,viewsLabel);
+        
+        
+        
+        content.addComponents(videoTitleLabel,new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"),new Label("test"));
+        
         
         
         //content.setComponentAlignment(videoTitleLabel, Alignment.MIDDLE_CENTER);
         //content.setComponentAlignment(sample, Alignment.MIDDLE_CENTER);
         
-        root.addComponent(content);
+        //root.addComponent(content);
         
-        addComponent(root);
+        addComponent(content);
         
     }
     

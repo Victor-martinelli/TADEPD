@@ -16,6 +16,14 @@ public class VideoController {
     
     DAO dao = new DAO();
     
+    //Esto incrementa el contador de visitas y coge el video (esto es para la vista de ver videos)
+    public UserVideo playVideo(String username,String title)
+    {
+        dao.incrementVideoViews(title);
+        return getVideo(username,title);
+    }
+    
+    //Solamente coge la informacion del video
     public UserVideo getVideo(String username,String title)
     {
         return dao.getVideo(username,title);

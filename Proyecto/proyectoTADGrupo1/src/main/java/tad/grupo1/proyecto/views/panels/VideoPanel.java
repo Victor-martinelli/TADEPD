@@ -45,27 +45,32 @@ public class VideoPanel extends CssLayout implements View{
     public VideoPanel(String username,String videoTitle)
     {
 
-        VerticalLayout content = new VerticalLayout();       
+        VerticalLayout content = new VerticalLayout();
+        VerticalLayout usernameAndDate = new VerticalLayout();  
         HorizontalLayout uploaderInfo = new HorizontalLayout();
         HorizontalLayout videoInfo = new HorizontalLayout();
         HorizontalLayout interactionsInfo = new HorizontalLayout();
-        UserVideo video = vc.getVideo(username, videoTitle);
+        UserVideo video = vc.playVideo(username, videoTitle);
         
         
         Label videoTitleLabel = new Label("<h1>"+videoTitle+"</h1>",ContentMode.HTML);
-        Label viewsLabel = new Label("<h2>"+video.getViews()+" views</h2>",ContentMode.HTML);
+        Label videoDateLabel = new Label("<p>Publicado el: "+video.getDate()+"</p>",ContentMode.HTML);
+        Label viewsLabel = new Label("<h2>"+video.getViews()+" visitas</h2>",ContentMode.HTML);
         Label uploaderUsernameLabel = new Label("<h3>"+username+"</h3>", ContentMode.HTML);
+        Label likesLabel = new Label("<p>"+video.getLikes()+"</p>", ContentMode.HTML);
+        Label dislikesLabel = new Label("<p>"+video.getDislikes()+"</p>", ContentMode.HTML);
+        Button subscribeButton = new Button("Suscribirse");
         Button likesButton = new Button(FontAwesome.THUMBS_UP);
         Button dislikesButton = new Button(FontAwesome.THUMBS_DOWN);
         
-        Label likesLabel = new Label("<h3>"+video.getLikes()+"</h3>", ContentMode.HTML);
-        Label dislikesLabel = new Label("<h3>"+video.getDislikes()+"</h3>", ContentMode.HTML);
+        
         
 
         
         
         content.setSizeFull();
         videoInfo.setSizeFull();
+        videoInfo.setMargin(true);
         
         content.setMargin(false);
         content.setSpacing(false);
@@ -73,6 +78,7 @@ public class VideoPanel extends CssLayout implements View{
         videoTitleLabel.setWidth(null);
         likesButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         dislikesButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        subscribeButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
         
         GwtVideo sample = new GwtVideo();
         sample.setPreload(PreloadMode.NONE);
@@ -101,14 +107,14 @@ public class VideoPanel extends CssLayout implements View{
         sample.ssetPoster(new FileResource(
                 new File(vc.getVideoThumbnail(username, videoTitle)))); */
         
+        usernameAndDate.addComponents(uploaderUsernameLabel,videoDateLabel);
         interactionsInfo.addComponents(likesButton,likesLabel,dislikesButton,dislikesLabel);
-        
         videoInfo.addComponents(viewsLabel,interactionsInfo);
-        videoInfo.setComponentAlignment(interactionsInfo, Alignment.MIDDLE_RIGHT);
-        uploaderInfo.addComponents(profile,uploaderUsernameLabel);
+        uploaderInfo.addComponents(profile,usernameAndDate,subscribeButton);
         content.addComponents(videoTitleLabel,sample,videoInfo,uploaderInfo);
         
-   
+        videoInfo.setComponentAlignment(interactionsInfo, Alignment.MIDDLE_RIGHT);
+        uploaderInfo.setComponentAlignment(subscribeButton, Alignment.MIDDLE_RIGHT);
         
         addComponent(content);
         

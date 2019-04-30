@@ -18,6 +18,7 @@ import static com.mongodb.client.model.Filters.eq;
 import com.vaadin.server.VaadinService;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import tad.grupo1.proyecto.objects.UserVideo;
@@ -43,10 +44,8 @@ public class DAO {
     
     public UserVideo getVideo(String username,String title)
     {
-        return new UserVideo(title,getVideoPath(username,title),(int)getVideoInfo(title,"views"),(int)getVideoInfo(title,"likes"),(int)getVideoInfo(title,"dislikes"),new ArrayList());
+        return new UserVideo(title,(Date)getVideoInfo(title,"date"),getVideoPath(username,title),(int)getVideoInfo(title,"views"),(int)getVideoInfo(title,"likes"),(int)getVideoInfo(title,"dislikes"),new ArrayList());
     }
-    
-    
     
     public String getVideoPath(String username,String title)
     {
@@ -63,9 +62,18 @@ public class DAO {
         return basepath+File.separator+"users"+File.separator+username+File.separator+"profile.png";
     }
     
+    public void incrementVideoViews(String title)
+    {
+        BasicDBObject newDocument = 
+		new BasicDBObject().append("$inc", 
+		new BasicDBObject().append("videos.$.views", 1));
+        
+        getDatabaseCollection().update(new BasicDBObject().append("videos.title",title), newDocument);
+    }
+    
     
     //Método que busca lo que le pidamos
-    public Object getVideoInfo(String title,String searchedParameter)
+    private Object getVideoInfo(String title,String searchedParameter)
     {
         DBCollection collection = this.getDatabaseCollection();
         

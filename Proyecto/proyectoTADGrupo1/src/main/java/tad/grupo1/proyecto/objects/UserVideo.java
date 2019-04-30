@@ -1,5 +1,7 @@
 package tad.grupo1.proyecto.objects;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -9,21 +11,23 @@ import java.util.List;
 public class UserVideo {
     
     private String title;
+    private Date date;
     private String videoPath;
     private int views;
     private int likes;
     private int dislikes;
     private List<UserComment> comments;
 
-    public UserVideo(String video, String videoPath, int views, int likes, int dislikes, List<UserComment> comments) {
-        this.title = video;
+    public UserVideo(String title, Date date, String videoPath, int views, int likes, int dislikes, List<UserComment> comments) {
+        this.title = title;
+        this.date = date;
         this.videoPath = videoPath;
         this.views = views;
         this.likes = likes;
         this.dislikes = dislikes;
         this.comments = comments;
     }
-    
+  
     
 
     public String getTitle() {
@@ -61,6 +65,18 @@ public class UserVideo {
     public int getDislikes() {
         return dislikes;
     }
+
+    public String getDate() {
+        
+       SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd"); 
+
+       return formatter.format(date);
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+    
 
     public void setDislikes(int dislikes) {
         this.dislikes = dislikes;

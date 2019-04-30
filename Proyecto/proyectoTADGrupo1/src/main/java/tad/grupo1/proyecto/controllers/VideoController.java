@@ -6,6 +6,7 @@
 package tad.grupo1.proyecto.controllers;
 
 import tad.grupo1.proyecto.DAO.DAO;
+import tad.grupo1.proyecto.objects.UserVideo;
 
 /**
  *
@@ -15,9 +16,9 @@ public class VideoController {
     
     DAO dao = new DAO();
     
-    public String getVideo(String username,String title)
+    public UserVideo getVideo(String username,String title)
     {
-        return dao.getVideoPath(username,title);
+        return dao.getVideo(username,title);
     }
     
     public String getVideoThumbnail(String username,String title)
@@ -25,10 +26,9 @@ public class VideoController {
         return dao.getVideoThumbnailPath(username,title);
     }
     
-    
-    public int getVideoViews(String title)
+    public String getProfilePicture(String username)
     {
-        return dao.getVideoViews(title);
+        return dao.getUserProfilePath(username);
     }
     
     

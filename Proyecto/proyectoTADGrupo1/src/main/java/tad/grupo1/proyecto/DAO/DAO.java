@@ -17,7 +17,10 @@ import com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Filters.eq;
 import com.vaadin.server.VaadinService;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import tad.grupo1.proyecto.objects.UserVideo;
 
 
 public class DAO {
@@ -38,6 +41,13 @@ public class DAO {
         
     }
     
+    public UserVideo getVideo(String username,String title)
+    {
+        return new UserVideo(title,getVideoPath(username,title),(int)getVideoInfo(title,"views"),(int)getVideoInfo(title,"likes"),(int)getVideoInfo(title,"dislikes"),new ArrayList());
+    }
+    
+    
+    
     public String getVideoPath(String username,String title)
     {
         return basepath+File.separator+"users"+File.separator+username+File.separator+"videos"+File.separator+title+File.separator+title+".mp4";
@@ -48,12 +58,18 @@ public class DAO {
         return basepath+File.separator+"users"+File.separator+username+File.separator+"videos"+File.separator+title+File.separator+"thumb.png";
     }
     
+    public String getUserProfilePath(String username)
+    {
+        return basepath+File.separator+"users"+File.separator+username+File.separator+"profile.png";
+    }
     
-    public int getVideoViews(String title)
+    
+    //Método que busca lo que le pidamos
+    public Object getVideoInfo(String title,String searchedParameter)
     {
         DBCollection collection = this.getDatabaseCollection();
         
-        int result=1;
+        Object result=new Object();
         
         BasicDBObject whereQuery = new BasicDBObject();
         //Donde el titulo sea el buscado
@@ -74,10 +90,9 @@ public class DAO {
                 while(it.hasNext())
                 {
                     DBObject currentVideo = (DBObject) it.next();
-                    result=(int) currentVideo.get("views");
+                    result=currentVideo.get(searchedParameter);
                 }
-                
-            
+
 	}
         
         cursor.close();

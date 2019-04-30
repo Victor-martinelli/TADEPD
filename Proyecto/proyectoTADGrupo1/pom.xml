@@ -40,6 +40,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-icons-flow</artifactId>
+                <version>1.0.2</version>
+                <type>jar</type>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

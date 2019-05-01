@@ -30,7 +30,7 @@ import tad.grupo1.proyecto.controllers.UsuarioController;
  * UI content when the user is not logged in yet.
  */
 public class LoginScreen extends CssLayout {
-    
+
     private UsuarioController usuarioController = new UsuarioController();
 
     private TextField username;
@@ -39,7 +39,7 @@ public class LoginScreen extends CssLayout {
     private Button register;
     private LoginListener loginListener;
 
-    public LoginScreen( LoginListener loginListener) {
+    public LoginScreen(LoginListener loginListener) {
         this.loginListener = loginListener;
         buildUI();
         username.focus();
@@ -60,7 +60,7 @@ public class LoginScreen extends CssLayout {
         centeringLayout.setSpacing(false);
         centeringLayout.setStyleName("centering-layout");
         centeringLayout.addComponent(loginForm);
-        centeringLayout.setComponentAlignment(loginForm,Alignment.MIDDLE_CENTER);
+        centeringLayout.setComponentAlignment(loginForm, Alignment.MIDDLE_CENTER);
 
         // information text about logging in
         CssLayout loginInformation = buildLoginInformation();
@@ -76,6 +76,7 @@ public class LoginScreen extends CssLayout {
         loginForm.setSizeUndefined();
         loginForm.setMargin(false);
 
+        // Formulario de login
         loginForm.addComponent(username = new TextField("Usuario"));
         username.setWidth(15, Unit.EM);
         loginForm.addComponent(password = new PasswordField("Contraseña"));
@@ -105,35 +106,35 @@ public class LoginScreen extends CssLayout {
         final VerticalLayout content = new VerticalLayout();
         content.setMargin(true);
         content.setSpacing(true);
-        
+
         Label labelRegistro = new Label("Registro");
         labelRegistro.setStyleName("h1");
         labelRegistro.setWidth(80, Unit.PERCENTAGE);
-        
+
         TextField nick = new TextField("Username");
         nick.setIcon(FontAwesome.USER);
         nick.setWidth(80, Unit.PERCENTAGE);
-        
+
         TextField email = new TextField("Email");
         email.setIcon(FontAwesome.MAIL_FORWARD);
         email.setWidth(80, Unit.PERCENTAGE);
-        
+
         PasswordField password = new PasswordField("Password");
         password.setIcon(FontAwesome.LOCK);
         password.setWidth(80, Unit.PERCENTAGE);
-        
+
         // Subir foto de perfil
-        Upload uploadFoto = subirFotoPerfil();
+        Upload uploadFoto = subirFotoPerfil(nick.getValue());
         uploadFoto.setImmediateMode(false);
         uploadFoto.setIcon(FontAwesome.IMAGE);
         uploadFoto.setWidth(80, Unit.PERCENTAGE);
-        
+
         Button signUp = new Button("Sign Up");
         signUp.setStyleName(ValoTheme.BUTTON_FRIENDLY);
         signUp.setWidth(80, Unit.PERCENTAGE);
-        
+
         content.addComponents(labelRegistro, nick, email, password, uploadFoto, signUp);
-        
+
         content.setComponentAlignment(labelRegistro, Alignment.TOP_CENTER);
         content.setComponentAlignment(nick, Alignment.MIDDLE_CENTER);
         content.setComponentAlignment(email, Alignment.MIDDLE_CENTER);
@@ -143,6 +144,7 @@ public class LoginScreen extends CssLayout {
 
         window.setContent(content);
 
+        // Logarse
         login.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -154,17 +156,37 @@ public class LoginScreen extends CssLayout {
             }
         });
 
+        // Mostrar venta de registro
         register.addClickListener((event) -> {
             this.getUI().getUI().addWindow(window);
         });
 
+        // Registrarse
         signUp.addClickListener((event) -> {
             String new_nick = nick.getValue();
             String new_email = email.getValue();
             String new_password = password.getValue();
 
-            usuarioController.registrarUsuario(new_nick, new_email, new_password);
-            this.getUI().getUI().removeWindow(window);
+            // TODO: guardar foto de perfil
+            
+            // Comprobar campos no vacios
+            if (new_nick != null && new_email != null && new_password != null && 
+                    new_nick.length() > 0 && new_email.length() > 0 && new_password.length() > 0) {
+                // Comprobar username ya existente
+                if (usuarioController.comprobarUsername(new_nick)) {
+                    showNotification(new Notification("Nombre de usuario ya existe",
+                            "Por favor introduzca otro nombre de usuario.",
+                            Notification.Type.WARNING_MESSAGE));
+                } else {
+                    usuarioController.registrarUsuario(new_nick, new_email, new_password);
+                    this.getUI().getUI().removeWindow(window);
+                }
+            }else{
+                showNotification(new Notification("Campos incompletos",
+                            "Por favor introduzca todos los campos.",
+                            Notification.Type.WARNING_MESSAGE));
+            }
+
         });
 
         login.setClickShortcut(ShortcutAction.KeyCode.ENTER);
@@ -178,7 +200,7 @@ public class LoginScreen extends CssLayout {
         loginInformation.setStyleName("login-information");
         Label loginInfoText = new Label(
                 "<h1>Login Information</h1>"
-                        + "Log in as &quot;admin&quot; to have full access. Log in with any other username to have read-only access. For all users, any password is fine",
+                + "Log in as &quot;admin&quot; to have full access. Log in with any other username to have read-only access. For all users, any password is fine",
                 ContentMode.HTML);
         loginInfoText.setSizeFull();
         loginInformation.addComponent(loginInfoText);
@@ -186,14 +208,14 @@ public class LoginScreen extends CssLayout {
     }
 
     private void login() {
-        
 
-        if (username.getValue()!=null && password.getValue()!=null) {
+        if (usuarioController.comprobarLogin(username.getValue(), password.getValue())) {
+            MainUI.session.setAttribute("user", username.getValue());
             loginListener.loginSuccessful();
         } else {
             showNotification(new Notification("Login failed",
-                    "Please check your username and password and try again.",
-                    Notification.Type.HUMANIZED_MESSAGE));
+                    "Por favor, compruebe su nombre de usuario y contraseña e intente de nuevo.",
+                    Notification.Type.WARNING_MESSAGE));
             username.focus();
         }
     }
@@ -206,10 +228,11 @@ public class LoginScreen extends CssLayout {
     }
 
     public interface LoginListener extends Serializable {
+
         void loginSuccessful();
     }
-    
-     private Upload subirFotoPerfil() {
+
+    private Upload subirFotoPerfil(String nick) {
         String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 
         class FileUploader implements Upload.Receiver {
@@ -221,7 +244,7 @@ public class LoginScreen extends CssLayout {
                 FileOutputStream fos = null; // Stream to write to
                 try {
                     // Open the file for writing.
-                    file = new File(basepath+File.separator+"users"+File.separator+"mikehunt"+File.separator+File.separator+filename);
+                    file = new File(basepath + File.separator + "users" + File.separator + nick + File.separator + File.separator + filename);
                     fos = new FileOutputStream(file);
                 } catch (final java.io.FileNotFoundException e) {
                     new Notification("Could not open file<br/>",
@@ -234,8 +257,8 @@ public class LoginScreen extends CssLayout {
             }
         };
 
-        Upload upload = new Upload("Upload it here", new FileUploader());
-        
+        Upload upload = new Upload("Foto de perfil", new FileUploader());
+
         return upload;
     }
 }

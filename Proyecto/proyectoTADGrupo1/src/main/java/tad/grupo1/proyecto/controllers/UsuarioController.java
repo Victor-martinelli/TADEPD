@@ -19,4 +19,12 @@ public class UsuarioController {
         dao.insertUsuario(username, email, password);
     }
     
+    public Boolean comprobarLogin(String username, String password){
+        return dao.login(username, password);
+    }
+    
+    public Boolean comprobarUsername(String username){
+        return dao.getUsername(username);
+    }
+    
 }

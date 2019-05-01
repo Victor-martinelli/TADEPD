@@ -109,7 +109,11 @@ public class DAO {
     }
     
     /**
-     * Metodo para insertar un nuevo usuario
+     * Método para insertar un nuevo usuario
+     * 
+     * @param username
+     * @param email
+     * @param password 
      */
     public void insertUsuario(String username, String email, String password){
         DBCollection collection = this.getDatabaseCollection();
@@ -120,8 +124,53 @@ public class DAO {
         usuario.append("username", username);
         usuario.append("password", password);
         usuario.append("email", email);
+        usuario.append("suscriptores", 0);
+        
+        BasicDBList listSuscripciones = new BasicDBList(); 
+        usuario.append("suscripciones", listSuscripciones); 
+        
+        BasicDBList listVideos = new BasicDBList();        
+        usuario.append("videos", listVideos);        
+        
         collection.insert(usuario);
     }
     
+    /**
+     * Método para logarse
+     * 
+     * @param username
+     * @param password
+     * @return 
+     */
+    public Boolean login(String username, String password){
+        DBCollection collection = this.getDatabaseCollection();
+        
+        BasicDBObject query = new BasicDBObject("username", username).append("password", password); 
+        DBObject user  = collection.findOne(query);
+        
+        if(user != null){
+            return true;
+        }else{
+            return false;
+        }     
+    }
+    
+    /**
+     * Método que comprueba si el nombre de usuario ya existe
+     * 
+     * @param username
+     * @return 
+     */
+    public Boolean getUsername(String username){
+        DBCollection collection = this.getDatabaseCollection();
+        BasicDBObject query = new BasicDBObject("username", username);
+        DBObject user  = collection.findOne(query);
+        
+        if(user != null){
+            return true;
+        }else{
+            return false;
+        }   
+    }
     
 }

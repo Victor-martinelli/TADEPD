@@ -5,6 +5,7 @@
  */
 package tad.grupo1.proyecto.objects;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -17,8 +18,19 @@ public class UserComment {
     private String comment;
     private String username;
 
-    public Date getDate() {
-        return date;
+    public UserComment(Date date, String comment, String username) {
+        this.date = date;
+        this.comment = comment;
+        this.username = username;
+    }
+
+    
+    
+    
+    public String getDate() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd"); 
+
+       return formatter.format(date);
     }
 
     public void setDate(Date date) {

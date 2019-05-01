@@ -25,12 +25,15 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
+import java.util.Iterator;
 import org.vaadin.gwtav.GwtVideo;
 import tad.grupo1.proyecto.controllers.VideoController;
+import tad.grupo1.proyecto.objects.UserComment;
 import tad.grupo1.proyecto.objects.UserVideo;
 
 /**
@@ -51,12 +54,14 @@ public class VideoPanel extends CssLayout implements View {
 
         VerticalLayout content = new VerticalLayout();
         VerticalLayout usernameAndDate = new VerticalLayout();
+        VerticalLayout commentSection = new VerticalLayout();
         HorizontalLayout uploaderInfo = new HorizontalLayout();
         HorizontalLayout videoInfo = new HorizontalLayout();
         HorizontalLayout interactionsInfo = new HorizontalLayout();
         video = vc.playVideo(username, videoTitle);
 
         Label videoTitleLabel = new Label("<h1>" + videoTitle + "</h1>", ContentMode.HTML);
+        Label commentsTitle = new Label("<h2>Comentarios</h2>", ContentMode.HTML);
         Label videoDateLabel = new Label("<p>Publicado el: " + video.getDate() + "</p>", ContentMode.HTML);
         Label viewsLabel = new Label("<h2>" + video.getViews() + " visitas</h2>", ContentMode.HTML);
         Label uploaderUsernameLabel = new Label("<h3>" + username + "</h3>", ContentMode.HTML);
@@ -66,8 +71,10 @@ public class VideoPanel extends CssLayout implements View {
         Button subscribeButton = new Button("Suscribirse");
         Button likesButton = createInteractionButton(1, username, likesLabel);
         Button dislikesButton = createInteractionButton(0, username, dislikesLabel);
+        TextArea comment = new TextArea("Tu comentario");
 
         content.setSizeFull();
+        commentSection.setSizeFull();
         videoInfo.setSizeFull();
         videoInfo.setMargin(true);
 
@@ -78,6 +85,8 @@ public class VideoPanel extends CssLayout implements View {
         likesButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         dislikesButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         subscribeButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        comment.setWordWrap(true);
+        comment.setSizeFull();
 
         GwtVideo sample = new GwtVideo();
         sample.setPreload(PreloadMode.NONE);
@@ -102,11 +111,12 @@ public class VideoPanel extends CssLayout implements View {
         /*
         sample.ssetPoster(new FileResource(
                 new File(vc.getVideoThumbnail(username, videoTitle)))); */
+        commentSection.addComponents(commentsTitle,comment,getComments());
         usernameAndDate.addComponents(uploaderUsernameLabel, videoDateLabel);
         interactionsInfo.addComponents(likesButton, likesLabel, dislikesButton, dislikesLabel);
         videoInfo.addComponents(viewsLabel, interactionsInfo);
         uploaderInfo.addComponents(profile, usernameAndDate, subscribeButton);
-        content.addComponents(videoTitleLabel, sample, videoInfo, uploaderInfo);
+        content.addComponents(videoTitleLabel, sample, videoInfo, uploaderInfo,commentSection);
 
         videoInfo.setComponentAlignment(interactionsInfo, Alignment.MIDDLE_RIGHT);
         uploaderInfo.setComponentAlignment(subscribeButton, Alignment.MIDDLE_RIGHT);
@@ -191,6 +201,25 @@ public class VideoPanel extends CssLayout implements View {
         return interactionButton;
     }
 
+    
+    private HorizontalLayout getComments()
+    {
+        HorizontalLayout comments = new HorizontalLayout();
+                
+        Iterator it = video.getComments().iterator();
+        
+        while(it.hasNext())
+        {
+            VerticalLayout aux = new VerticalLayout();
+            UserComment comment = (UserComment)it.next();
+            
+            aux.addComponents(new Label("<b>"+comment.getUsername()+"</b>",ContentMode.HTML),new Label(comment.getDate(),ContentMode.HTML),new Label("<i>"+comment.getComment()+"</i>",ContentMode.HTML));
+            comments.addComponent(aux);
+        }
+                
+        return comments;
+    }
+    
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
 

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import tad.grupo1.proyecto.objects.UserComment;
 import tad.grupo1.proyecto.objects.UserVideo;
 
 public class DAO {
@@ -39,7 +40,8 @@ public class DAO {
     }
 
     public UserVideo getVideo(String username, String title) {
-        return new UserVideo(title, (Date) getVideoInfo(title, "date"), getVideoPath(username, title), (int) getVideoInfo(title, "views"), (List) getVideoInfo(title, "likes"), (List) getVideoInfo(title, "dislikes"), new ArrayList());
+
+        return new UserVideo(title, (Date) getVideoInfo(title, "date"), getVideoPath(username, title), (int) getVideoInfo(title, "views"), (List) getVideoInfo(title, "likes"), (List) getVideoInfo(title, "dislikes"),getVideoComments(title));
     }
 
     public String getVideoPath(String username, String title) {
@@ -53,6 +55,26 @@ public class DAO {
     public String getUserProfilePath(String username) {
         return basepath + File.separator + "users" + File.separator + username + File.separator + "profile.png";
     }
+    
+    private List<UserComment> getVideoComments(String title)
+    {
+        
+        List<UserComment> list = new ArrayList();
+        //Cogemos a los comentarios
+                BasicDBList comments = (BasicDBList) getVideoInfo(title,"comments");
+                
+                //Iteramos sobre ellos
+                Iterator it = comments.iterator();
+                while(it.hasNext())
+                {
+                    DBObject currentComentario = (DBObject) it.next();
+
+                    list.add(new UserComment((Date)currentComentario.get("date"),currentComentario.get("comment").toString(),currentComentario.get("username").toString()));
+                }
+                
+        return list;
+    }
+    
 
     //Método que busca lo que le pidamos
     private Object getVideoInfo(String title, String searchedParameter) {

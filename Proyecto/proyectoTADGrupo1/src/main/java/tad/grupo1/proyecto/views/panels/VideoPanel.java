@@ -43,6 +43,9 @@ public class VideoPanel extends CssLayout implements View {
 
     boolean clickLikeButton = false;
     boolean clickDislikeButton = false;
+    UserVideo video;
+    Label likesLabel;
+    Label dislikesLabel;
 
     public VideoPanel(String username, String videoTitle) {
 
@@ -51,17 +54,18 @@ public class VideoPanel extends CssLayout implements View {
         HorizontalLayout uploaderInfo = new HorizontalLayout();
         HorizontalLayout videoInfo = new HorizontalLayout();
         HorizontalLayout interactionsInfo = new HorizontalLayout();
-        UserVideo video = vc.playVideo(username, videoTitle);
+        video = vc.playVideo(username, videoTitle);
 
         Label videoTitleLabel = new Label("<h1>" + videoTitle + "</h1>", ContentMode.HTML);
         Label videoDateLabel = new Label("<p>Publicado el: " + video.getDate() + "</p>", ContentMode.HTML);
         Label viewsLabel = new Label("<h2>" + video.getViews() + " visitas</h2>", ContentMode.HTML);
         Label uploaderUsernameLabel = new Label("<h3>" + username + "</h3>", ContentMode.HTML);
-        Label likesLabel = new Label("<p>" + video.getLikesCount() + "</p>", ContentMode.HTML);
-        Label dislikesLabel = new Label("<p>" + video.getDislikesCount() + "</p>", ContentMode.HTML);
+        likesLabel = new Label("<p>" + video.getLikesCount() + "</p>", ContentMode.HTML);
+        dislikesLabel = new Label("<p>" + video.getDislikesCount() + "</p>", ContentMode.HTML);
+
         Button subscribeButton = new Button("Suscribirse");
-        Button likesButton = createInteractionButton(1,video,username);
-        Button dislikesButton = new Button(FontAwesome.THUMBS_DOWN);
+        Button likesButton = createInteractionButton(1, username, likesLabel);
+        Button dislikesButton = createInteractionButton(0, username, dislikesLabel);
 
         content.setSizeFull();
         videoInfo.setSizeFull();
@@ -111,7 +115,7 @@ public class VideoPanel extends CssLayout implements View {
 
     }
 
-    private Button createInteractionButton(int buttonType, UserVideo video, String username) {
+    private Button createInteractionButton(int buttonType, String username, Label count) {
         /*
         0 --> Like
         1 --> Dislike
@@ -124,26 +128,64 @@ public class VideoPanel extends CssLayout implements View {
             if (video.hasUserLikedVideo(username)) {
                 clickLikeButton = true;
             }
+                interactionButton.addClickListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
 
-            interactionButton.addClickListener(new Button.ClickListener() {
-                @Override
-                public void buttonClick(Button.ClickEvent event) {
-                    
-                    //Video ya tenia like
-                    if(clickLikeButton)
-                    {
-                        vc.unlikeVideo(video.getTitle(),username);
-                        new Notification("AVISO","Ya no te gusta el vídeo",Notification.TYPE_TRAY_NOTIFICATION).show(Page.getCurrent());
+                        //Video ya tenia like
+                        if (clickLikeButton) {
+                            clickLikeButton = false;
+                            vc.unlikeVideo(video.getTitle(), username);
+                            video.removeLike(username);
+                            new Notification("AVISO", "Ya no te gusta el vídeo", Notification.TYPE_TRAY_NOTIFICATION).show(Page.getCurrent());
+                        } else {
+                            //Comprobamos si esta en dislike
+                            if (video.hasUserDisLikedVideo(username)) {
+                                video.removeDislike(username);
+                                clickDislikeButton = false;
+                                dislikesLabel.setValue(Integer.toString(video.getDislikesCount()));
+                                vc.undislikeVideo(video.getTitle(), username);
+                            }
+                            clickLikeButton = true;
+                            video.addLike(username);
+                            vc.likeVideo(video.getTitle(), username);
+                            new Notification("AVISO", "Te gusta el vídeo", Notification.TYPE_TRAY_NOTIFICATION).show(Page.getCurrent());
+                        }
+                        count.setValue(Integer.toString(video.getLikesCount()));
                     }
-                    else //No tenia like
-                    {
-                        
-                    }
-                    
-                }
-            });
+                });
         } else {
             interactionButton = new Button(FontAwesome.THUMBS_DOWN);
+            if (video.hasUserDisLikedVideo(username)) {
+                clickDislikeButton = true;
+            }
+                interactionButton.addClickListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+
+                        //Video ya tenia like
+                        if (clickDislikeButton) {
+                            clickDislikeButton = false;
+                            vc.undislikeVideo(video.getTitle(), username);
+                            video.removeDislike(username);
+                            new Notification("AVISO", "Quitado dislike", Notification.TYPE_TRAY_NOTIFICATION).show(Page.getCurrent());
+                        } else {
+                            //Comprobamos si esta en like
+                            if (video.hasUserLikedVideo(username)) {
+                                video.removeLike(username);
+                                clickLikeButton = false;
+                                likesLabel.setValue(Integer.toString(video.getLikesCount()));
+                                vc.unlikeVideo(video.getTitle(), username);
+                            }
+                            clickDislikeButton = true;
+                            video.addDisLike(username);
+                            vc.dislikeVideo(video.getTitle(), username);
+                            new Notification("AVISO", "No te gusta el vídeo", Notification.TYPE_TRAY_NOTIFICATION).show(Page.getCurrent());
+                        }
+                        count.setValue(Integer.toString(video.getDislikesCount()));
+                    }
+                });
+
         }
 
         return interactionButton;

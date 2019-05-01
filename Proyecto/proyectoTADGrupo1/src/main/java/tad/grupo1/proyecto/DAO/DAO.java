@@ -54,14 +54,6 @@ public class DAO {
         return basepath + File.separator + "users" + File.separator + username + File.separator + "profile.png";
     }
 
-    public void incrementVideoViews(String title) {
-        BasicDBObject newDocument
-                = new BasicDBObject().append("$inc",
-                        new BasicDBObject().append("videos.$.views", 1));
-
-        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
-    }
-
     //Método que busca lo que le pidamos
     private Object getVideoInfo(String title, String searchedParameter) {
         DBCollection collection = this.getDatabaseCollection();
@@ -96,10 +88,52 @@ public class DAO {
         return result;
     }
 
+    public void incrementVideoViews(String title) {
+        BasicDBObject newDocument
+                = new BasicDBObject().append("$inc",
+                        new BasicDBObject().append("videos.$.views", 1));
+
+        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+    }
+    
     public void unlikeVideo(String title, String username) {
-        BasicDBObject match = new BasicDBObject("videos.$.title", title); //Cogemos el video que queremos
-        BasicDBObject update = new BasicDBObject("likes", username); //Cogermos el objeto de la lista de likes
-        this.getDatabaseCollection().update(match, new BasicDBObject("$pull", update)); //Lo borramos
+        
+        BasicDBObject newDocument
+                = new BasicDBObject().append("$pull",
+                        new BasicDBObject().append("videos.$.likes",username));
+
+        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+        
+    }
+    
+    public void likeVideo(String title, String username) {
+        
+        BasicDBObject newDocument
+                = new BasicDBObject().append("$push",
+                        new BasicDBObject().append("videos.$.likes",username));
+
+        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+        
+    }
+    
+    public void undislikeVideo(String title, String username) {
+        
+        BasicDBObject newDocument
+                = new BasicDBObject().append("$pull",
+                        new BasicDBObject().append("videos.$.dislikes",username));
+
+        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+        
+    }
+    
+    public void dislikeVideo(String title, String username) {
+        
+        BasicDBObject newDocument
+                = new BasicDBObject().append("$push",
+                        new BasicDBObject().append("videos.$.dislikes",username));
+
+        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+        
     }
 
     /**

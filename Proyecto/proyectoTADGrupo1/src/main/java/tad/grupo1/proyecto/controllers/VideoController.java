@@ -39,9 +39,24 @@ public class VideoController {
         return dao.getUserProfilePath(username);
     }
     
+    public void likeVideo(String title,String username)
+    {
+        dao.likeVideo(title, username);
+    }
+    
     public void unlikeVideo(String title,String username)
     {
         dao.unlikeVideo(title, username);
+    }
+    
+    public void dislikeVideo(String title,String username)
+    {
+        dao.dislikeVideo(title, username);
+    }
+    
+    public void undislikeVideo(String title,String username)
+    {
+        dao.undislikeVideo(title, username);
     }
     
 }

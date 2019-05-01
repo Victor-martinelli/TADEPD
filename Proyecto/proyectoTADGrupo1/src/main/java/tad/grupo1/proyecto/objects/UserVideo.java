@@ -54,7 +54,25 @@ public class UserVideo {
         this.dislikes = dislikes;
     }
 
+    public void addLike(String username)
+    {
+        likes.add(username);
+    }
     
+    public void removeLike(String username)
+    {
+        likes.remove(username);
+    }
+    
+    public void addDisLike(String username)
+    {
+        dislikes.add(username);
+    }
+    
+    public void removeDislike(String username)
+    {
+        dislikes.remove(username);
+    }
 
     public String getTitle() {
         return title;
@@ -105,6 +123,11 @@ public class UserVideo {
     public boolean hasUserLikedVideo(String username)
     {
         return likes.contains(username);
+    }
+    
+    public boolean hasUserDisLikedVideo(String username)
+    {
+        return dislikes.contains(username);
     }
     
 }

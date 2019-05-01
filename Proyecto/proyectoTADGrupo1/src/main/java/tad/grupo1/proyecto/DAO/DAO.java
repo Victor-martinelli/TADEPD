@@ -44,7 +44,7 @@ public class DAO {
     
     public UserVideo getVideo(String username,String title)
     {
-        return new UserVideo(title,(Date)getVideoInfo(title,"date"),getVideoPath(username,title),(int)getVideoInfo(title,"views"),(int)getVideoInfo(title,"likes"),(int)getVideoInfo(title,"dislikes"),new ArrayList());
+        return new UserVideo(title,(Date)getVideoInfo(title,"date"),getVideoPath(username,title),(int)getVideoInfo(title,"views"),(List)getVideoInfo(title,"likes"),(List)getVideoInfo(title,"dislikes"),new ArrayList());
     }
     
     public String getVideoPath(String username,String title)

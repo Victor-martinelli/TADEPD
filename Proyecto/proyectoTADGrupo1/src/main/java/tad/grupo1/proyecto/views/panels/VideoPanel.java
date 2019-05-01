@@ -25,10 +25,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
-import com.vaadin.ui.Video;
 import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
-import javax.swing.Icon;
 import org.vaadin.gwtav.GwtVideo;
 import tad.grupo1.proyecto.controllers.VideoController;
 import tad.grupo1.proyecto.objects.UserVideo;
@@ -41,6 +39,9 @@ public class VideoPanel extends CssLayout implements View{
 
     
     VideoController vc = new VideoController();
+    
+    boolean clickLikeButton;
+    boolean clickDislikeButton;
     
     public VideoPanel(String username,String videoTitle)
     {
@@ -65,8 +66,6 @@ public class VideoPanel extends CssLayout implements View{
         
         
         
-
-        
         
         content.setSizeFull();
         videoInfo.setSizeFull();
@@ -79,6 +78,8 @@ public class VideoPanel extends CssLayout implements View{
         likesButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         dislikesButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         subscribeButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        
+        
         
         GwtVideo sample = new GwtVideo();
         sample.setPreload(PreloadMode.NONE);
@@ -121,7 +122,30 @@ public class VideoPanel extends CssLayout implements View{
     }
     
     
-    
+    private Button createInteractionButton(int buttonType,UserVideo video,String username)
+    {
+        /*
+        0 --> Like
+        1 --> Dislike
+        */
+        
+        Button interactionButton = null;
+        
+        if(buttonType==1)
+        {
+            interactionButton = new Button(FontAwesome.THUMBS_UP);
+            if(video.hasUserLikedVideo(username))
+            {
+                
+            }
+        }
+        else
+        {
+            interactionButton = new Button(FontAwesome.THUMBS_DOWN);
+        }
+        
+        return interactionButton;
+    }
     
     
     @Override

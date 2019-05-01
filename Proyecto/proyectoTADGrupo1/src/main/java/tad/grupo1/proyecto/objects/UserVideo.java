@@ -14,11 +14,11 @@ public class UserVideo {
     private Date date;
     private String videoPath;
     private int views;
-    private int likes;
-    private int dislikes;
+    private List likes;
+    private List dislikes;
     private List<UserComment> comments;
 
-    public UserVideo(String title, Date date, String videoPath, int views, int likes, int dislikes, List<UserComment> comments) {
+    public UserVideo(String title, Date date, String videoPath, int views, List likes, List dislikes, List<UserComment> comments) {
         this.title = title;
         this.date = date;
         this.videoPath = videoPath;
@@ -27,7 +27,23 @@ public class UserVideo {
         this.dislikes = dislikes;
         this.comments = comments;
     }
-  
+
+    public List getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List likes) {
+        this.likes = likes;
+    }
+
+    public List getDislikes() {
+        return dislikes;
+    }
+
+    public void setDislikes(List dislikes) {
+        this.dislikes = dislikes;
+    }
+
     
 
     public String getTitle() {
@@ -54,17 +70,7 @@ public class UserVideo {
         this.views = views;
     }
 
-    public int getLikes() {
-        return likes;
-    }
-
-    public void setLikes(int likes) {
-        this.likes = likes;
-    }
-
-    public int getDislikes() {
-        return dislikes;
-    }
+  
 
     public String getDate() {
         
@@ -76,11 +82,7 @@ public class UserVideo {
     public void setDate(Date date) {
         this.date = date;
     }
-    
 
-    public void setDislikes(int dislikes) {
-        this.dislikes = dislikes;
-    }
 
     public List<UserComment> getComments() {
         return comments;
@@ -90,6 +92,9 @@ public class UserVideo {
         this.comments = comments;
     }
     
-    
+    public boolean hasUserLikedVideo(String username)
+    {
+        return likes.contains(username);
+    }
     
 }

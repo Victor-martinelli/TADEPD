@@ -17,14 +17,21 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import tad.grupo1.proyecto.controllers.UsuarioController;
 
 /**
  * UI content when the user is not logged in yet.
  */
 public class LoginScreen extends CssLayout {
+    
+    private UsuarioController usuarioController = new UsuarioController();
 
     private TextField username;
     private PasswordField password;
@@ -87,9 +94,9 @@ public class LoginScreen extends CssLayout {
         buttonsArea.addComponent(register = new Button("Registro"));
         buttonsArea.addComponent(buttons);
 
-        // Venta de registro
+        // Ventana de registro
         final Window window = new Window();
-        window.setWidth(300, Unit.PIXELS);
+        window.setWidth(400, Unit.PIXELS);
         window.setHeight(400, Unit.PIXELS);
         window.setDraggable(false);
         window.setClosable(true);
@@ -98,26 +105,40 @@ public class LoginScreen extends CssLayout {
         final VerticalLayout content = new VerticalLayout();
         content.setMargin(true);
         content.setSpacing(true);
-        TextField name = new TextField("Name");
-        name.setIcon(FontAwesome.USER);
-        name.setWidth(80, Unit.PERCENTAGE);
-        TextField nick = new TextField("Nick");
-        nick.setIcon(FontAwesome.GAMEPAD);
+        
+        Label labelRegistro = new Label("Registro");
+        labelRegistro.setStyleName("h1");
+        labelRegistro.setWidth(80, Unit.PERCENTAGE);
+        
+        TextField nick = new TextField("Username");
+        nick.setIcon(FontAwesome.USER);
         nick.setWidth(80, Unit.PERCENTAGE);
+        
         TextField email = new TextField("Email");
         email.setIcon(FontAwesome.MAIL_FORWARD);
         email.setWidth(80, Unit.PERCENTAGE);
+        
         PasswordField password = new PasswordField("Password");
         password.setIcon(FontAwesome.LOCK);
         password.setWidth(80, Unit.PERCENTAGE);
+        
+        // Subir foto de perfil
+        Upload uploadFoto = subirFotoPerfil();
+        uploadFoto.setImmediateMode(false);
+        uploadFoto.setIcon(FontAwesome.IMAGE);
+        uploadFoto.setWidth(80, Unit.PERCENTAGE);
+        
         Button signUp = new Button("Sign Up");
         signUp.setStyleName(ValoTheme.BUTTON_FRIENDLY);
         signUp.setWidth(80, Unit.PERCENTAGE);
-        content.addComponents(name, nick, email, password, signUp);
-        content.setComponentAlignment(name, Alignment.MIDDLE_CENTER);
+        
+        content.addComponents(labelRegistro, nick, email, password, uploadFoto, signUp);
+        
+        content.setComponentAlignment(labelRegistro, Alignment.TOP_CENTER);
         content.setComponentAlignment(nick, Alignment.MIDDLE_CENTER);
         content.setComponentAlignment(email, Alignment.MIDDLE_CENTER);
         content.setComponentAlignment(password, Alignment.MIDDLE_CENTER);
+        content.setComponentAlignment(uploadFoto, Alignment.MIDDLE_CENTER);
         content.setComponentAlignment(signUp, Alignment.MIDDLE_CENTER);
 
         window.setContent(content);
@@ -138,12 +159,11 @@ public class LoginScreen extends CssLayout {
         });
 
         signUp.addClickListener((event) -> {
-            String new_name = name.getValue();
             String new_nick = nick.getValue();
             String new_email = email.getValue();
             String new_password = password.getValue();
 
-            // TODO: Añadir nuevo usuario
+            usuarioController.registrarUsuario(new_nick, new_email, new_password);
             this.getUI().getUI().removeWindow(window);
         });
 
@@ -187,5 +207,35 @@ public class LoginScreen extends CssLayout {
 
     public interface LoginListener extends Serializable {
         void loginSuccessful();
+    }
+    
+     private Upload subirFotoPerfil() {
+        String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+
+        class FileUploader implements Upload.Receiver {
+
+            private File file;
+
+            public OutputStream receiveUpload(String filename, String mimeType) {
+                // Create upload stream
+                FileOutputStream fos = null; // Stream to write to
+                try {
+                    // Open the file for writing.
+                    file = new File(basepath+File.separator+"users"+File.separator+"mikehunt"+File.separator+File.separator+filename);
+                    fos = new FileOutputStream(file);
+                } catch (final java.io.FileNotFoundException e) {
+                    new Notification("Could not open file<br/>",
+                            e.getMessage(),
+                            Notification.Type.ERROR_MESSAGE)
+                            .show(Page.getCurrent());
+                    return null;
+                }
+                return fos; // Return the output stream to write to
+            }
+        };
+
+        Upload upload = new Upload("Upload it here", new FileUploader());
+        
+        return upload;
     }
 }

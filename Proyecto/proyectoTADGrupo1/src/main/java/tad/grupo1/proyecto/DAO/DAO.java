@@ -108,5 +108,20 @@ public class DAO {
         return result;
     }
     
+    /**
+     * Metodo para insertar un nuevo usuario
+     */
+    public void insertUsuario(String username, String email, String password){
+        DBCollection collection = this.getDatabaseCollection();
+        
+        // Crear documento usurio
+        BasicDBObject usuario = new BasicDBObject();
+        
+        usuario.append("username", username);
+        usuario.append("password", password);
+        usuario.append("email", email);
+        collection.insert(usuario);
+    }
+    
     
 }

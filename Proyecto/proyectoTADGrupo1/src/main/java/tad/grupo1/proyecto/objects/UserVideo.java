@@ -31,6 +31,11 @@ public class UserVideo {
     public List getLikes() {
         return likes;
     }
+    
+    public int getLikesCount()
+    {
+        return getLikes().size();
+    }
 
     public void setLikes(List likes) {
         this.likes = likes;
@@ -38,6 +43,11 @@ public class UserVideo {
 
     public List getDislikes() {
         return dislikes;
+    }
+    
+    public int getDislikesCount()
+    {
+        return getDislikes().size();
     }
 
     public void setDislikes(List dislikes) {

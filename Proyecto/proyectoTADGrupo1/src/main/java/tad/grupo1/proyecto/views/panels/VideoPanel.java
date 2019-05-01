@@ -9,6 +9,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.Sizeable;
@@ -22,6 +23,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
@@ -35,42 +37,36 @@ import tad.grupo1.proyecto.objects.UserVideo;
  *
  * @author Portatil
  */
-public class VideoPanel extends CssLayout implements View{
+public class VideoPanel extends CssLayout implements View {
 
-    
     VideoController vc = new VideoController();
-    
-    boolean clickLikeButton;
-    boolean clickDislikeButton;
-    
-    public VideoPanel(String username,String videoTitle)
-    {
+
+    boolean clickLikeButton = false;
+    boolean clickDislikeButton = false;
+
+    public VideoPanel(String username, String videoTitle) {
 
         VerticalLayout content = new VerticalLayout();
-        VerticalLayout usernameAndDate = new VerticalLayout();  
+        VerticalLayout usernameAndDate = new VerticalLayout();
         HorizontalLayout uploaderInfo = new HorizontalLayout();
         HorizontalLayout videoInfo = new HorizontalLayout();
         HorizontalLayout interactionsInfo = new HorizontalLayout();
         UserVideo video = vc.playVideo(username, videoTitle);
-        
-        
-        Label videoTitleLabel = new Label("<h1>"+videoTitle+"</h1>",ContentMode.HTML);
-        Label videoDateLabel = new Label("<p>Publicado el: "+video.getDate()+"</p>",ContentMode.HTML);
-        Label viewsLabel = new Label("<h2>"+video.getViews()+" visitas</h2>",ContentMode.HTML);
-        Label uploaderUsernameLabel = new Label("<h3>"+username+"</h3>", ContentMode.HTML);
-        Label likesLabel = new Label("<p>"+video.getLikes()+"</p>", ContentMode.HTML);
-        Label dislikesLabel = new Label("<p>"+video.getDislikes()+"</p>", ContentMode.HTML);
+
+        Label videoTitleLabel = new Label("<h1>" + videoTitle + "</h1>", ContentMode.HTML);
+        Label videoDateLabel = new Label("<p>Publicado el: " + video.getDate() + "</p>", ContentMode.HTML);
+        Label viewsLabel = new Label("<h2>" + video.getViews() + " visitas</h2>", ContentMode.HTML);
+        Label uploaderUsernameLabel = new Label("<h3>" + username + "</h3>", ContentMode.HTML);
+        Label likesLabel = new Label("<p>" + video.getLikesCount() + "</p>", ContentMode.HTML);
+        Label dislikesLabel = new Label("<p>" + video.getDislikesCount() + "</p>", ContentMode.HTML);
         Button subscribeButton = new Button("Suscribirse");
-        Button likesButton = new Button(FontAwesome.THUMBS_UP);
+        Button likesButton = createInteractionButton(1,video,username);
         Button dislikesButton = new Button(FontAwesome.THUMBS_DOWN);
-        
-        
-        
-        
+
         content.setSizeFull();
         videoInfo.setSizeFull();
         videoInfo.setMargin(true);
-        
+
         content.setMargin(false);
         content.setSpacing(false);
 
@@ -78,20 +74,18 @@ public class VideoPanel extends CssLayout implements View{
         likesButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         dislikesButton.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         subscribeButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        
-        
-        
+
         GwtVideo sample = new GwtVideo();
         sample.setPreload(PreloadMode.NONE);
-        
+
         final Resource mp4Resource = new FileResource(
                 new File(video.getVideoPath()));
-        
-        Image profile = new Image("",new FileResource(
+
+        Image profile = new Image("", new FileResource(
                 new File(vc.getProfilePicture(username))));
-        
+
         profile.setWidth("5em");
-        
+
         sample.setSource(mp4Resource);
         sample.setResponsive(true);
         sample.setHtmlContentAllowed(true);
@@ -100,57 +94,64 @@ public class VideoPanel extends CssLayout implements View{
         //sample.setWidth("100%");
         sample.setWidth("1080px");
         sample.setAltText("Can't play media");
-        
-        
-        
-        
+
         /*
         sample.ssetPoster(new FileResource(
                 new File(vc.getVideoThumbnail(username, videoTitle)))); */
-        
-        usernameAndDate.addComponents(uploaderUsernameLabel,videoDateLabel);
-        interactionsInfo.addComponents(likesButton,likesLabel,dislikesButton,dislikesLabel);
-        videoInfo.addComponents(viewsLabel,interactionsInfo);
-        uploaderInfo.addComponents(profile,usernameAndDate,subscribeButton);
-        content.addComponents(videoTitleLabel,sample,videoInfo,uploaderInfo);
-        
+        usernameAndDate.addComponents(uploaderUsernameLabel, videoDateLabel);
+        interactionsInfo.addComponents(likesButton, likesLabel, dislikesButton, dislikesLabel);
+        videoInfo.addComponents(viewsLabel, interactionsInfo);
+        uploaderInfo.addComponents(profile, usernameAndDate, subscribeButton);
+        content.addComponents(videoTitleLabel, sample, videoInfo, uploaderInfo);
+
         videoInfo.setComponentAlignment(interactionsInfo, Alignment.MIDDLE_RIGHT);
         uploaderInfo.setComponentAlignment(subscribeButton, Alignment.MIDDLE_RIGHT);
-        
+
         addComponent(content);
-        
+
     }
-    
-    
-    private Button createInteractionButton(int buttonType,UserVideo video,String username)
-    {
+
+    private Button createInteractionButton(int buttonType, UserVideo video, String username) {
         /*
         0 --> Like
         1 --> Dislike
-        */
-        
+         */
+
         Button interactionButton = null;
-        
-        if(buttonType==1)
-        {
+
+        if (buttonType == 1) {
             interactionButton = new Button(FontAwesome.THUMBS_UP);
-            if(video.hasUserLikedVideo(username))
-            {
-                
+            if (video.hasUserLikedVideo(username)) {
+                clickLikeButton = true;
             }
-        }
-        else
-        {
+
+            interactionButton.addClickListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    
+                    //Video ya tenia like
+                    if(clickLikeButton)
+                    {
+                        vc.unlikeVideo(video.getTitle(),username);
+                        new Notification("AVISO","Ya no te gusta el vídeo",Notification.TYPE_TRAY_NOTIFICATION).show(Page.getCurrent());
+                    }
+                    else //No tenia like
+                    {
+                        
+                    }
+                    
+                }
+            });
+        } else {
             interactionButton = new Button(FontAwesome.THUMBS_DOWN);
         }
-        
+
         return interactionButton;
     }
-    
-    
+
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        
+
     }
-    
+
 }

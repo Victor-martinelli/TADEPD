@@ -32,9 +32,12 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
 import java.util.Iterator;
 import org.vaadin.gwtav.GwtVideo;
+import tad.grupo1.proyecto.controllers.UsuarioController;
 import tad.grupo1.proyecto.controllers.VideoController;
+import tad.grupo1.proyecto.objects.User;
 import tad.grupo1.proyecto.objects.UserComment;
 import tad.grupo1.proyecto.objects.UserVideo;
+import static tad.grupo1.proyecto.views.MainUI.session;
 
 /**
  *
@@ -43,9 +46,13 @@ import tad.grupo1.proyecto.objects.UserVideo;
 public class VideoPanel extends CssLayout implements View {
 
     VideoController vc = new VideoController();
+    UsuarioController uc = new UsuarioController();
 
     boolean clickLikeButton = false;
     boolean clickDislikeButton = false;
+    boolean suscribeButton = false;
+    Label uploaderUsernameLabel;
+    Label suscribeStatus;
     UserVideo video;
     Label likesLabel;
     Label dislikesLabel;
@@ -58,17 +65,19 @@ public class VideoPanel extends CssLayout implements View {
         HorizontalLayout uploaderInfo = new HorizontalLayout();
         HorizontalLayout videoInfo = new HorizontalLayout();
         HorizontalLayout interactionsInfo = new HorizontalLayout();
+        
+        User uploader = new User(username,uc.getSuscriptores(username));
         video = vc.playVideo(username, videoTitle);
 
         Label videoTitleLabel = new Label("<h1>" + videoTitle + "</h1>", ContentMode.HTML);
         Label commentsTitle = new Label("<h2>Comentarios</h2>", ContentMode.HTML);
         Label videoDateLabel = new Label("<p>Publicado el: " + video.getDate() + "</p>", ContentMode.HTML);
         Label viewsLabel = new Label("<h2>" + video.getViews() + " visitas</h2>", ContentMode.HTML);
-        Label uploaderUsernameLabel = new Label("<h3>" + username + "</h3>", ContentMode.HTML);
+        uploaderUsernameLabel= new Label("<h3>" + uploader.getUsername() + " - suscriptores: "+uploader.getSuscriptores()+"</h3>", ContentMode.HTML);
         likesLabel = new Label("<p>" + video.getLikesCount() + "</p>", ContentMode.HTML);
         dislikesLabel = new Label("<p>" + video.getDislikesCount() + "</p>", ContentMode.HTML);
 
-        Button subscribeButton = new Button("Suscribirse");
+        Button subscribeButton = createSuscribeButton(uploader);
         Button likesButton = createInteractionButton(1, username, likesLabel);
         Button dislikesButton = createInteractionButton(0, username, dislikesLabel);
         Button sendCommentButton = new Button("Publicar Comentario");
@@ -109,6 +118,10 @@ public class VideoPanel extends CssLayout implements View {
                         commentSection.addComponents(commentsTitle,comment,sendCommentButton,getComments());
                     }
                 });
+        
+        
+        
+        
 
         profile.setWidth("5em");
 
@@ -128,16 +141,64 @@ public class VideoPanel extends CssLayout implements View {
         usernameAndDate.addComponents(uploaderUsernameLabel, videoDateLabel);
         interactionsInfo.addComponents(likesButton, likesLabel, dislikesButton, dislikesLabel);
         videoInfo.addComponents(viewsLabel, interactionsInfo);
-        uploaderInfo.addComponents(profile, usernameAndDate, subscribeButton);
+        uploaderInfo.addComponents(profile, usernameAndDate, subscribeButton,suscribeStatus);
         content.addComponents(videoTitleLabel, sample, videoInfo, uploaderInfo,commentSection);
 
         videoInfo.setComponentAlignment(interactionsInfo, Alignment.MIDDLE_RIGHT);
         uploaderInfo.setComponentAlignment(subscribeButton, Alignment.MIDDLE_RIGHT);
+        uploaderInfo.setComponentAlignment(suscribeStatus, Alignment.MIDDLE_RIGHT);
 
         addComponent(content);
 
     }
 
+    private Button createSuscribeButton(User uploader)
+    {
+        String currentUser = session.getAttribute("user").toString();
+        
+        Button interactionButton = new Button("Suscríbete");
+        
+        //El usuario esta susrito al que ha subido el video
+        if(uc.isUserSuscribed(currentUser, uploader.getUsername()))
+        {
+            suscribeButton= true;
+            suscribeStatus = new Label("<h3>Suscrito</h3>",ContentMode.HTML);
+        } //El usuario no esta susrito al que ha subido el video
+        else
+        {
+            suscribeStatus = new Label("<h3>Suscríbete</h3>",ContentMode.HTML);
+        }
+        
+        interactionButton.addClickListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        
+                        //Si estamos suscritos
+                        if(suscribeButton)
+                        {
+                            uc.removeSuscripcion(currentUser, uploader.getUsername());
+                            uploader.removeSuscriptores();
+                            suscribeButton=false;
+                            suscribeStatus.setValue("<h3>Suscríbete</h3>");
+                            new Notification("AVISO", "Ya no estás suscrito", Notification.TYPE_TRAY_NOTIFICATION).show(Page.getCurrent());
+                        }
+                        else //Si no estabamos suscritos
+                        {
+                             uc.addSuscripcion(currentUser, uploader.getUsername());
+                            uploader.addSuscriptores();
+                            suscribeButton=true;
+                            suscribeStatus.setValue("<h3>Suscrito</h3>");
+                            new Notification("AVISO", "Te has suscrito", Notification.TYPE_TRAY_NOTIFICATION).show(Page.getCurrent());
+                        }
+                        
+                        uploaderUsernameLabel.setValue("<h3>" + uploader.getUsername() + " - suscriptores: "+uploader.getSuscriptores()+"</h3>");
+                    }
+                });
+        
+        return interactionButton;
+    }
+    
+    
     private Button createInteractionButton(int buttonType, String username, Label count) {
         /*
         0 --> Like

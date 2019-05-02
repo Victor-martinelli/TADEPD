@@ -27,4 +27,24 @@ public class UsuarioController {
         return dao.getUsername(username);
     }
     
+    public Boolean isUserSuscribed(String username,String uploader)
+    {
+        return dao.isUserSuscribed(username,uploader);
+    }
+    
+    public void removeSuscripcion(String username,String uploader)
+    {
+        dao.removeSuscripcion(username, uploader);
+    }
+    
+    public void addSuscripcion(String username,String uploader)
+    {
+        dao.addSuscripcion(username, uploader);
+    }
+    
+    public int getSuscriptores(String username)
+    {
+        return dao.getUserSuscriptores(username);
+    }
+    
 }

@@ -56,6 +56,11 @@ public class DAO {
         return basepath + File.separator + "users" + File.separator + username + File.separator + "profile.png";
     }
     
+    public String getLogoPath()
+    {
+        return basepath + File.separator + "logo.png";
+    }
+    
     private List<UserComment> getVideoComments(String title)
     {
         
@@ -73,6 +78,88 @@ public class DAO {
                 }
                 
         return list;
+    }
+    
+    public int getUserSuscriptores(String username)
+    {
+        return (int)getUserInfo(username,"suscriptores");
+    }
+    
+    
+    public boolean isUserSuscribed(String user,String uploader)
+    {
+        List<String> suscripciones = (List<String>)getUserInfo(user,"suscripciones");
+        
+        return suscripciones.contains(uploader);
+    }
+    
+    public void removeSuscripcion(String user,String uploader)
+    {
+        
+        //Quitamos al usuario de su lista de suscripciones
+        BasicDBObject newDocument
+                = new BasicDBObject().append("$pull",
+                        new BasicDBObject().append("suscripciones",uploader));
+
+        getDatabaseCollection().update(new BasicDBObject().append("username", user), newDocument);
+        
+        
+        //Decrementamos el número de suscriptores
+        
+        BasicDBObject newDocument2
+                = new BasicDBObject().append("$inc",
+                        new BasicDBObject().append("suscriptores", -1));
+
+        getDatabaseCollection().update(new BasicDBObject().append("username", uploader), newDocument2);
+        
+    }
+    
+    public void addSuscripcion(String user,String uploader)
+    {
+        
+        //Agregamos al usuario de su lista de suscripciones
+        BasicDBObject newDocument
+                = new BasicDBObject().append("$push",
+                        new BasicDBObject().append("suscripciones",uploader));
+
+        getDatabaseCollection().update(new BasicDBObject().append("username", user), newDocument);
+        
+        
+        //Incrementamos el número de suscriptores
+        
+        BasicDBObject newDocument2
+                = new BasicDBObject().append("$inc",
+                        new BasicDBObject().append("suscriptores", 1));
+
+        getDatabaseCollection().update(new BasicDBObject().append("username", uploader), newDocument2);
+        
+    }
+    
+    
+    public Object getUserInfo(String username, String searchedParameter)
+    {
+        DBCollection collection = this.getDatabaseCollection();
+
+        Object result = new Object();
+
+        BasicDBObject whereQuery = new BasicDBObject();
+        //Donde el titulo sea el buscado
+        whereQuery.put("username", username);
+
+        //Resultado de la buscada
+        DBCursor cursor = collection.find(whereQuery);
+
+        //Solamente queda coger el resultado
+        while (cursor.hasNext()) {
+            DBObject current = cursor.next();
+
+            result = current.get(searchedParameter);
+
+        }
+
+        cursor.close();
+
+        return result;
     }
     
 

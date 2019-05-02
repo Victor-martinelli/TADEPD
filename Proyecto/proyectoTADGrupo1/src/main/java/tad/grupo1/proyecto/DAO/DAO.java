@@ -13,8 +13,6 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.client.model.Filters.*;
-import static com.mongodb.client.model.Filters.eq;
 import com.vaadin.server.VaadinService;
 import java.io.File;
 import java.util.ArrayList;
@@ -28,13 +26,15 @@ public class DAO {
 
     String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 
+    MongoClientURI uri = new MongoClientURI(
+                "mongodb://mongoUser:mongoPassword@proyectotad2019-shard-00-00-dpclw.azure.mongodb.net:27017,proyectotad2019-shard-00-01-dpclw.azure.mongodb.net:27017,proyectotad2019-shard-00-02-dpclw.azure.mongodb.net:27017/test?ssl=true&replicaSet=proyectoTAD2019-shard-0&authSource=admin&retryWrites=true");
+
+    
     /*
     Metodo que crea una nueva conexión con la base de datos (hacia el exterior)
      */
     public DBCollection getDatabaseCollection() {
-        MongoClientURI uri = new MongoClientURI(
-                "mongodb://mongoUser:mongoPassword@proyectotad2019-shard-00-00-dpclw.azure.mongodb.net:27017,proyectotad2019-shard-00-01-dpclw.azure.mongodb.net:27017,proyectotad2019-shard-00-02-dpclw.azure.mongodb.net:27017/test?ssl=true&replicaSet=proyectoTAD2019-shard-0&authSource=admin&retryWrites=true");
-
+        
         return new MongoClient(uri).getDB("database").getCollection("proyectoTAD");
 
     }
@@ -103,7 +103,7 @@ public class DAO {
 
         getDatabaseCollection().update(new BasicDBObject().append("username", user), newDocument);
         
-        
+        closeConnection();
         //Decrementamos el número de suscriptores
         
         BasicDBObject newDocument2
@@ -112,6 +112,7 @@ public class DAO {
 
         getDatabaseCollection().update(new BasicDBObject().append("username", uploader), newDocument2);
         
+        closeConnection();
     }
     
     public void addSuscripcion(String user,String uploader)
@@ -124,7 +125,7 @@ public class DAO {
 
         getDatabaseCollection().update(new BasicDBObject().append("username", user), newDocument);
         
-        
+        closeConnection();
         //Incrementamos el número de suscriptores
         
         BasicDBObject newDocument2
@@ -133,6 +134,7 @@ public class DAO {
 
         getDatabaseCollection().update(new BasicDBObject().append("username", uploader), newDocument2);
         
+        closeConnection();
     }
     
     
@@ -158,7 +160,7 @@ public class DAO {
         }
 
         cursor.close();
-
+        closeConnection();
         return result;
     }
     
@@ -193,6 +195,7 @@ public class DAO {
         }
 
         cursor.close();
+        closeConnection();
 
         return result;
     }
@@ -203,6 +206,8 @@ public class DAO {
                         new BasicDBObject().append("videos.$.views", 1));
 
         getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+        
+        closeConnection();
     }
     
     public void unlikeVideo(String title, String username) {
@@ -213,6 +218,7 @@ public class DAO {
 
         getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
         
+        closeConnection();
     }
     
     public void likeVideo(String title, String username) {
@@ -223,6 +229,7 @@ public class DAO {
 
         getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
         
+        closeConnection();
     }
     
     public void undislikeVideo(String title, String username) {
@@ -233,6 +240,8 @@ public class DAO {
 
         getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
         
+        
+        closeConnection();
     }
     
     public void dislikeVideo(String title, String username) {
@@ -243,6 +252,7 @@ public class DAO {
 
         getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
         
+        closeConnection();
     }
     
     public void publishComment(String title,String username,String comment)
@@ -260,6 +270,8 @@ public class DAO {
                         new BasicDBObject().append("videos.$.comments",usuario));
 
         getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+        
+        closeConnection();
     }
 
     /**
@@ -287,6 +299,8 @@ public class DAO {
         usuario.append("videos", listVideos);
 
         collection.insert(usuario);
+        
+        closeConnection();
     }
 
     /**
@@ -301,7 +315,7 @@ public class DAO {
 
         BasicDBObject query = new BasicDBObject("username", username).append("password", password);
         DBObject user = collection.findOne(query);
-
+        closeConnection();
         if (user != null) {
             return true;
         } else {
@@ -320,11 +334,19 @@ public class DAO {
         BasicDBObject query = new BasicDBObject("username", username);
         DBObject user = collection.findOne(query);
 
+        closeConnection();
+        
         if (user != null) {
             return true;
         } else {
             return false;
         }
+    }
+    
+    //Cierra la conexión con Mongo
+    public void closeConnection()
+    {
+        new MongoClient(uri).close();
     }
 
 }

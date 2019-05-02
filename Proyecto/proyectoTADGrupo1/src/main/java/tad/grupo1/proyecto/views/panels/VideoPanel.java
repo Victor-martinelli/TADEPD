@@ -37,6 +37,8 @@ import tad.grupo1.proyecto.controllers.VideoController;
 import tad.grupo1.proyecto.objects.User;
 import tad.grupo1.proyecto.objects.UserComment;
 import tad.grupo1.proyecto.objects.UserVideo;
+import static tad.grupo1.proyecto.views.MainScreen.uc;
+import static tad.grupo1.proyecto.views.MainScreen.vc;
 import static tad.grupo1.proyecto.views.MainUI.session;
 
 /**
@@ -44,9 +46,6 @@ import static tad.grupo1.proyecto.views.MainUI.session;
  * @author Portatil
  */
 public class VideoPanel extends CssLayout implements View {
-
-    VideoController vc = new VideoController();
-    UsuarioController uc = new UsuarioController();
 
     boolean clickLikeButton = false;
     boolean clickDislikeButton = false;
@@ -105,7 +104,7 @@ public class VideoPanel extends CssLayout implements View {
                 new File(video.getVideoPath()));
 
         Image profile = new Image("", new FileResource(
-                new File(vc.getProfilePicture(username))));
+                new File(uc.getProfilePicture(username))));
         
         sendCommentButton.addClickListener(new Button.ClickListener() {
                     @Override
@@ -131,7 +130,7 @@ public class VideoPanel extends CssLayout implements View {
         sample.setShowControls(true);
         //sample.setWidth("100em");
         //sample.setWidth("100%");
-        sample.setWidth("1080px");
+        sample.setWidth("1000px");
         sample.setAltText("Can't play media");
 
         /*

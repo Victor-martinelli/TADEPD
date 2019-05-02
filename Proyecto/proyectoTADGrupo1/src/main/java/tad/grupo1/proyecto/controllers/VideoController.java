@@ -39,11 +39,6 @@ public class VideoController {
         dao.publishComment(title,username,comment);
     }
     
-    public String getProfilePicture(String username)
-    {
-        return dao.getUserProfilePath(username);
-    }
-    
     public void likeVideo(String title,String username)
     {
         dao.likeVideo(title, username);

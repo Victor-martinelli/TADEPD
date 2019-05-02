@@ -32,6 +32,11 @@ public class UsuarioController {
         return dao.isUserSuscribed(username,uploader);
     }
     
+    public String getProfilePicture(String username)
+    {
+        return dao.getUserProfilePath(username);
+    }
+    
     public void removeSuscripcion(String username,String uploader)
     {
         dao.removeSuscripcion(username, uploader);

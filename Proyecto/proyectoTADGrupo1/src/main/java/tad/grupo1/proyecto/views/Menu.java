@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
@@ -23,6 +24,8 @@ import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import java.io.File;
+import tad.grupo1.proyecto.controllers.GeneralController;
 
 /**
  * Responsive navigation menu presenting a list of available views to the user.
@@ -30,19 +33,28 @@ import com.vaadin.ui.themes.ValoTheme;
 public class Menu extends CssLayout {
 
     private Navigator navigator;
+    private GeneralController gc = new GeneralController();
+    private VerticalLayout sidebar = new VerticalLayout();
 
     public Menu() {
-        //this.navigator = navigator;
+        Image logo = new Image("", new FileResource(
+                new File(gc.getLogo())));
         
-        VerticalLayout sidebar = new VerticalLayout();
+        //logo.setWidth("30%");
+
         
-        Button test = new Button("This is a test");
+        sidebar.setWidth("5%");
         
-        sidebar.addComponents(test,test);
+        sidebar.addComponents(logo);
         
         addComponent(sidebar);
         
     }
+
+    public VerticalLayout getSidebar() {
+        return sidebar;
+    }
+    
 
     
 }

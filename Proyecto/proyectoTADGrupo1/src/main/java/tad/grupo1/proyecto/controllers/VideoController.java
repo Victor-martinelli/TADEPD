@@ -34,6 +34,11 @@ public class VideoController {
         return dao.getVideoThumbnailPath(username,title);
     }
     
+    public void publishComment(String title,String username,String comment)
+    {
+        dao.publishComment(title,username,comment);
+    }
+    
     public String getProfilePicture(String username)
     {
         return dao.getUserProfilePath(username);

@@ -1,6 +1,8 @@
 package tad.grupo1.proyecto.objects;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -98,7 +100,10 @@ public class UserVideo {
         this.views = views;
     }
 
-  
+    public void addComment(String username, String comment)
+    {
+        comments.add(new UserComment(new Date(),comment,username));
+    }
 
     public String getDate() {
         
@@ -113,7 +118,14 @@ public class UserVideo {
 
 
     public List<UserComment> getComments() {
-        return comments;
+        
+        //Sorted by date
+        
+        List<UserComment> reverse = new ArrayList<UserComment>(comments);
+        
+        Collections.reverse(reverse);
+        
+        return reverse;
     }
 
     public void setComments(List<UserComment> comments) {

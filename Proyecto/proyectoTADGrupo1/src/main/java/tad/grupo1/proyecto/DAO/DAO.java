@@ -157,6 +157,23 @@ public class DAO {
         getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
         
     }
+    
+    public void publishComment(String title,String username,String comment)
+    {
+
+        // Crear documento usurio
+        BasicDBObject usuario = new BasicDBObject();
+
+        usuario.append("date", new Date());
+        usuario.append("username", username);
+        usuario.append("comment", comment);
+
+        BasicDBObject newDocument
+                = new BasicDBObject().append("$push",
+                        new BasicDBObject().append("videos.$.comments",usuario));
+
+        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+    }
 
     /**
      * Método para insertar un nuevo usuario

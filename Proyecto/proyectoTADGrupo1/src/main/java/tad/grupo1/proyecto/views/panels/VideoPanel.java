@@ -71,6 +71,7 @@ public class VideoPanel extends CssLayout implements View {
         Button subscribeButton = new Button("Suscribirse");
         Button likesButton = createInteractionButton(1, username, likesLabel);
         Button dislikesButton = createInteractionButton(0, username, dislikesLabel);
+        Button sendCommentButton = new Button("Publicar Comentario");
         TextArea comment = new TextArea("Tu comentario");
 
         content.setSizeFull();
@@ -96,6 +97,18 @@ public class VideoPanel extends CssLayout implements View {
 
         Image profile = new Image("", new FileResource(
                 new File(vc.getProfilePicture(username))));
+        
+        sendCommentButton.addClickListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        vc.publishComment(video.getTitle(),username,comment.getValue());
+                        new Notification("AVISO", "Comentario Publicado", Notification.TYPE_TRAY_NOTIFICATION).show(Page.getCurrent());
+                        video.addComment(username,comment.getValue());
+                        comment.clear();
+                        commentSection.removeAllComponents();
+                        commentSection.addComponents(commentsTitle,comment,sendCommentButton,getComments());
+                    }
+                });
 
         profile.setWidth("5em");
 
@@ -111,7 +124,7 @@ public class VideoPanel extends CssLayout implements View {
         /*
         sample.ssetPoster(new FileResource(
                 new File(vc.getVideoThumbnail(username, videoTitle)))); */
-        commentSection.addComponents(commentsTitle,comment,getComments());
+        commentSection.addComponents(commentsTitle,comment,sendCommentButton,getComments());
         usernameAndDate.addComponents(uploaderUsernameLabel, videoDateLabel);
         interactionsInfo.addComponents(likesButton, likesLabel, dislikesButton, dislikesLabel);
         videoInfo.addComponents(viewsLabel, interactionsInfo);
@@ -202,9 +215,9 @@ public class VideoPanel extends CssLayout implements View {
     }
 
     
-    private HorizontalLayout getComments()
+    private VerticalLayout getComments()
     {
-        HorizontalLayout comments = new HorizontalLayout();
+        VerticalLayout comments = new VerticalLayout();
                 
         Iterator it = video.getComments().iterator();
         

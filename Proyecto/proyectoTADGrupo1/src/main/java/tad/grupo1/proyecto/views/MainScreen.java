@@ -9,6 +9,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -29,7 +30,7 @@ public class MainScreen extends HorizontalLayout {
     public static UsuarioController uc = new UsuarioController();
     public static VideoController vc = new VideoController();
 
-    public MainScreen(MainUI ui) {
+    public MainScreen() {
 
         String username = session.getAttribute("user").toString();
         
@@ -48,11 +49,14 @@ public class MainScreen extends HorizontalLayout {
 
         VideoPanel videoContainer = new VideoPanel("mikehunt","despacito2");
         
-        Menu menu = createMenu();
+        Menu menu = createMenu(username);
+        
+        HorizontalLayout top = createTopMenu();
         
         
-        VerticalLayout content = new VerticalLayout(createTopMenu(username),videoContainer);
+        VerticalLayout content = new VerticalLayout(top,videoContainer);
         
+        top.setSizeFull();
         
         HorizontalLayout page = new HorizontalLayout(menu,content); 
 
@@ -62,7 +66,7 @@ public class MainScreen extends HorizontalLayout {
         
     }
     
-    public Menu createMenu()
+    public Menu createMenu(String username)
     {
         Menu aux = new Menu();
         
@@ -70,19 +74,37 @@ public class MainScreen extends HorizontalLayout {
         Button uploadVideo = new Button("Subir video");
         Button suscripctions = new Button("Suscripciones");
         Button closeSession = new Button("Cerrar Sesion");
+        Image profile = new Image("", new FileResource(
+                new File(uc.getProfilePicture(username))));
+        Label usernameLabel = new Label(username);
         
-        aux.getSidebar().addComponents(myChannel,uploadVideo,suscripctions,closeSession);
+        profile.setWidth("5em");
+        
+        aux.getSidebar().addComponents(myChannel,uploadVideo,suscripctions,closeSession,profile,usernameLabel);
+        
+        aux.getSidebar().setMargin(false);
+        aux.getSidebar().setSpacing(false);
+        aux.getSidebar().setSizeFull();
         
         myChannel.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         uploadVideo.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         suscripctions.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         closeSession.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         
+        aux.getSidebar().setComponentAlignment(myChannel,Alignment.MIDDLE_CENTER);
+        aux.getSidebar().setComponentAlignment(uploadVideo,Alignment.MIDDLE_CENTER);
+        aux.getSidebar().setComponentAlignment(suscripctions,Alignment.MIDDLE_CENTER);
+        aux.getSidebar().setComponentAlignment(closeSession,Alignment.MIDDLE_CENTER);
+        aux.getSidebar().setComponentAlignment(profile,Alignment.MIDDLE_CENTER);
+        aux.getSidebar().setComponentAlignment(usernameLabel,Alignment.MIDDLE_CENTER);
+        
+        //aux.getSidebar().setComponentAlignment(profile,Alignment.MIDDLE_CENTER);
+        //aux.getSidebar().setComponentAlignment(usernameLabel,Alignment.MIDDLE_CENTER);
         
         return aux;
     }
     
-    public HorizontalLayout createTopMenu(String username)
+    public HorizontalLayout createTopMenu()
     {
         HorizontalLayout aux = new HorizontalLayout();
         
@@ -90,17 +112,18 @@ public class MainScreen extends HorizontalLayout {
         
         Button searchButton = new Button(FontAwesome.SEARCH);
         
-        Image profile = new Image("", new FileResource(
-                new File(uc.getProfilePicture(username))));
-        
-        profile.setWidth("5em");
         
         
-        aux.addComponents(search,searchButton,profile);
+        aux.addComponents(search,searchButton);
         
-        aux.setWidth("100%");
+        aux.setMargin(false);
+        aux.setSpacing(false);
+        aux.setSizeFull();
         
-        aux.setComponentAlignment(profile,Alignment.MIDDLE_RIGHT);
+        //aux.setSizeFull();
+        //search.setSizeFull();
+        
+        aux.setComponentAlignment(search,Alignment.MIDDLE_CENTER);
         
         
         return aux;

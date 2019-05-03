@@ -53,10 +53,8 @@ public class MainUI extends UI {
     }
 
     protected void showMainView() {
-        addStyleName(ValoTheme.UI_WITH_MENU);
-        setContent(new MainScreen(MainUI.this));
-        //Tras setear el navigator dentro del constructor de Main Screen, vamos a esa vista
-        //getNavigator().navigateTo(getNavigator().getState());
+        //addStyleName(ValoTheme.UI_WITH_MENU);
+        setContent(new MainScreen());
     }
     
     

@@ -42,10 +42,18 @@ public class Menu extends CssLayout {
         
         //logo.setWidth("30%");
 
+        logo.setWidth("90%");
         
         sidebar.setWidth("5%");
         
+        sidebar.setMargin(false);
+        sidebar.setSpacing(false);
+        sidebar.setSizeFull();
+        
+        
         sidebar.addComponents(logo);
+        
+        sidebar.setComponentAlignment(logo,Alignment.MIDDLE_CENTER);
         
         addComponent(sidebar);
         

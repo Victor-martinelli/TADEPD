@@ -348,5 +348,36 @@ public class DAO {
     {
         new MongoClient(uri).close();
     }
+    
+    /**
+     * Método para obtener las suscripciones de un usuario
+     * 
+     * @param username
+     * @return 
+     */
+    public Object getSuscripciones(String username){
+        DBCollection collection = this.getDatabaseCollection();
+        BasicDBObject query = new BasicDBObject("username", username);
+        DBObject user  = collection.findOne(query);
+        
+        BasicDBList listSuscripciones = (BasicDBList) user.get("suscripciones");
+        
+        return listSuscripciones;        
+    }
+    
+    /**
+     * Método para obtener los videos de los canales a los que un usuario esta suscrito
+     * 
+     * @param username
+     * @return 
+     */
+    public List getSuscritoVideo(String username){
+        DBCollection collection = this.getDatabaseCollection();
+        BasicDBObject query = new BasicDBObject("username", username);
+        DBObject user  = collection.findOne(query);
+        
+        BasicDBList listVideos = (BasicDBList) user.get("videos");
+        return listVideos;
+    }
 
 }

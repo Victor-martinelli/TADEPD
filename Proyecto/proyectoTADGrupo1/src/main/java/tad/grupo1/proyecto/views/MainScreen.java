@@ -4,19 +4,25 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import tad.grupo1.proyecto.controllers.UsuarioController;
 import tad.grupo1.proyecto.controllers.VideoController;
 import static tad.grupo1.proyecto.views.MainUI.session;
+import tad.grupo1.proyecto.views.panels.SubirVideoPanel;
 import tad.grupo1.proyecto.views.panels.VideoPanel;
 
 /**
@@ -26,39 +32,22 @@ import tad.grupo1.proyecto.views.panels.VideoPanel;
  */
 public class MainScreen extends HorizontalLayout {
     
-    private Menu menu;
+    private Menu menu = createMenu(session.getAttribute("user").toString());
     public static UsuarioController uc = new UsuarioController();
     public static VideoController vc = new VideoController();
+    public VideoPanel videopanel = new VideoPanel("mikehunt", "despacito2");
+    TopMenu top = createTopMenu();
+    HorizontalLayout page;
+    VerticalLayout videoContainer;
+    VerticalLayout content;
 
     public MainScreen() {
+        
+        content = new VerticalLayout(top,videopanel);
 
-        String username = session.getAttribute("user").toString();
-        
-        /*
-        
-        CAMBIAR ESTO A LA PAGINA DE INICIO, POR AHORA PARA TESTEAR
-        CUANDO INICIES SESION TE MOSTRARÁ UN VIDEO POR DEFECTO
-        
-        
-        menu.addView(new SampleCrudView(), SampleCrudView.VIEW_NAME,
-                SampleCrudView.VIEW_NAME, FontAwesome.EDIT);
-        menu.addView(new AboutView(), AboutView.VIEW_NAME, AboutView.VIEW_NAME,
-                FontAwesome.INFO_CIRCLE);
-
-        */
-
-        VideoPanel videoContainer = new VideoPanel("mikehunt","despacito2");
-        
-        Menu menu = createMenu(username);
-        
-        HorizontalLayout top = createTopMenu();
-        
-        
-        VerticalLayout content = new VerticalLayout(top,videoContainer);
-        
-        top.setSizeFull();
-        
-        HorizontalLayout page = new HorizontalLayout(menu,content); 
+        page = new HorizontalLayout(menu,content); 
+      
+        page.setSizeFull();
 
         addComponent(page);
         
@@ -82,9 +71,7 @@ public class MainScreen extends HorizontalLayout {
         
         aux.getSidebar().addComponents(myChannel,uploadVideo,suscripctions,closeSession,profile,usernameLabel);
         
-        aux.getSidebar().setMargin(false);
-        aux.getSidebar().setSpacing(false);
-        aux.getSidebar().setSizeFull();
+        
         
         myChannel.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
         uploadVideo.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
@@ -101,12 +88,21 @@ public class MainScreen extends HorizontalLayout {
         //aux.getSidebar().setComponentAlignment(profile,Alignment.MIDDLE_CENTER);
         //aux.getSidebar().setComponentAlignment(usernameLabel,Alignment.MIDDLE_CENTER);
         
+        
+         uploadVideo.addClickListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        createUploadVideoView(username);
+                    }
+                });
+        
+        
         return aux;
     }
     
-    public HorizontalLayout createTopMenu()
+    public TopMenu createTopMenu()
     {
-        HorizontalLayout aux = new HorizontalLayout();
+        TopMenu aux = new TopMenu();
         
         TextField search = new TextField();
         
@@ -114,21 +110,37 @@ public class MainScreen extends HorizontalLayout {
         
         
         
-        aux.addComponents(search,searchButton);
+        aux.getTopBar().addComponents(search);
         
-        aux.setMargin(false);
-        aux.setSpacing(false);
+        //aux.setMargin(false);
+        //aux.setSpacing(false);
+        
         aux.setSizeFull();
-        
-        //aux.setSizeFull();
+        search.setWidthUndefined();
         //search.setSizeFull();
         
-        aux.setComponentAlignment(search,Alignment.MIDDLE_CENTER);
+       aux.getTopBar().setComponentAlignment(search,Alignment.MIDDLE_CENTER);
         
+        //aux.setSizeFull();
         
         return aux;
     }
     
+    public void createUploadVideoView(String username)
+    {
+        content = new VerticalLayout(top,new SubirVideoPanel(username));
+        
+        page.removeAllComponents();
+        
+        page  = new HorizontalLayout(menu,content);
+        
+        page.setSizeFull();
+        
+        addComponent(page);
+    }
+    
+    
+   
     
     // notify the view menu about view changes so that it can display which view
     // is currently active

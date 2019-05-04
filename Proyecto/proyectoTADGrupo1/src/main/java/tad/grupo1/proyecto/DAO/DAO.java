@@ -13,12 +13,22 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Upload;
+import com.vaadin.ui.Upload.Receiver;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import tad.grupo1.proyecto.objects.UserComment;
 import tad.grupo1.proyecto.objects.UserVideo;
 
@@ -37,6 +47,21 @@ public class DAO {
         
         return new MongoClient(uri).getDB("database").getCollection("proyectoTAD");
 
+    }
+    
+    public FileOutputStream upload(String username,String filename, String mimeType, int typeCheck)
+    {
+     
+        FileOutputStream fos = null;
+        try {
+            String videoPath = basepath + File.separator+"users"+File.separator+username+File.separator+"videos"+File.separator+filename;
+            // Open the file for writing.
+            File file = new File(videoPath);
+            fos = new FileOutputStream(file);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return fos;
     }
 
     public UserVideo getVideo(String username, String title) {
@@ -379,5 +404,7 @@ public class DAO {
         BasicDBList listVideos = (BasicDBList) user.get("videos");
         return listVideos;
     }
+    
+    
 
 }

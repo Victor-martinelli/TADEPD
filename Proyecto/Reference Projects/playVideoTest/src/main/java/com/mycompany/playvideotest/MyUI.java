@@ -64,7 +64,7 @@ public class MyUI extends UI {
                     file = new File(basepath + File.separator+"videos"+File.separator+filename);
                     fos = new FileOutputStream(file);
                 } catch (final java.io.FileNotFoundException e) {
-                    new Notification("Could not open file<br/>",
+                    new Notification("Could nasepath + File.separator+\"videos\"+File.separator+filenameot open file<br/>",
                             e.getMessage(),
                             Notification.Type.ERROR_MESSAGE)
                             .show(Page.getCurrent());

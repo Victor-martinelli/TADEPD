@@ -5,6 +5,8 @@
  */
 package tad.grupo1.proyecto.controllers;
 
+import com.vaadin.ui.Upload;
+import java.io.FileOutputStream;
 import tad.grupo1.proyecto.DAO.DAO;
 import tad.grupo1.proyecto.objects.UserVideo;
 
@@ -21,6 +23,11 @@ public class VideoController {
     {
         dao.incrementVideoViews(title);
         return getVideo(username,title);
+    }
+    
+    public FileOutputStream uploadVideo(String username,String filename,String mimeType, int typeCheck)
+    {
+        return dao.upload(username,filename,mimeType,typeCheck);
     }
     
     //Solamente coge la informacion del video
@@ -58,5 +65,6 @@ public class VideoController {
     {
         dao.undislikeVideo(title, username);
     }
+
     
 }

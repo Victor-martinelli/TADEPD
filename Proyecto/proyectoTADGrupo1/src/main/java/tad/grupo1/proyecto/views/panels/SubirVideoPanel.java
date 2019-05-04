@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import tad.grupo1.proyecto.objects.FileUploader;
 import static tad.grupo1.proyecto.views.MainScreen.vc;
+import static tad.grupo1.proyecto.views.MainUI.session;
 
 /**
  *
@@ -30,10 +31,14 @@ import static tad.grupo1.proyecto.views.MainScreen.vc;
 public class SubirVideoPanel extends CssLayout implements View{
     
     private VerticalLayout content;
+    private String username;
+    private String title;
     
     public SubirVideoPanel(String username)
     {
     
+        this.username=username;
+        
         VerticalLayout labels = new VerticalLayout();
         
         Label title = new Label("<h2>Subida de Videos</h2>",ContentMode.HTML);
@@ -50,7 +55,7 @@ public class SubirVideoPanel extends CssLayout implements View{
         labels.setComponentAlignment(title, Alignment.MIDDLE_CENTER);
         labels.setComponentAlignment(warning, Alignment.MIDDLE_CENTER);
         
-        content.addComponents(labels,createUploadForm(username));
+        content.addComponents(labels,createVideoUploadForm(username));
         
         content.setComponentAlignment(labels, Alignment.MIDDLE_RIGHT);
         
@@ -61,10 +66,61 @@ public class SubirVideoPanel extends CssLayout implements View{
         
     }
     
-    public Upload createUploadForm(String username)
+    public void createSecondUploader()
+    {
+        this.removeAllComponents();
+        
+        VerticalLayout labels = new VerticalLayout();
+        
+        String videoTitle = session.getAttribute("currentVideo").toString();
+        
+        Label title = new Label("<h2>Subida de Miniatura</h2>",ContentMode.HTML);
+        Label warning = new Label("Sube una miniatura para tu video, si no subes una se aplicara una por defecto",ContentMode.HTML);
+        
+        
+        content = new VerticalLayout();
+        
+        labels.addComponents(title,warning);
+        labels.setSizeFull();
+        labels.setMargin(false);
+        labels.setSpacing(false);
+        content.setSizeFull();
+        
+        labels.setComponentAlignment(title, Alignment.MIDDLE_CENTER);
+        labels.setComponentAlignment(warning, Alignment.MIDDLE_CENTER);
+        
+        content.addComponents(labels,createThumbUploadForm(username,videoTitle));
+        
+        content.setComponentAlignment(labels, Alignment.MIDDLE_RIGHT);
+        
+        
+        
+        
+        addComponent(content);
+    }
+    
+    public Upload createVideoUploadForm(String username)
+    {
+        
+        FileUploader receiver = new FileUploader(this,username,1);
+        
+        Upload upload = receiver.createVideoUploadForm();
+        
+        upload.addSucceededListener(receiver);
+        
+        return upload;
+    }
+    
+    public Upload createThumbUploadForm(String username,String title)
     {
     
-        return new Upload("Sube el video aqui",new FileUploader(username,1));
+        FileUploader receiver = new FileUploader(this,username,0,title);
+        
+        Upload upload = receiver.createThumbUploadForm();
+        
+        upload.addSucceededListener(receiver);
+        
+        return upload;
     }
     
 }

@@ -25,9 +25,14 @@ public class VideoController {
         return getVideo(username,title);
     }
     
-    public FileOutputStream uploadVideo(String username,String filename,String mimeType, int typeCheck)
+    public FileOutputStream uploadVideo(String username,String filename)
     {
-        return dao.upload(username,filename,mimeType,typeCheck);
+        return dao.uploadVideo(username,filename);
+    }
+    
+    public FileOutputStream uploadThumnbail(String username,String title,String filename)
+    {
+        return dao.uploadThumbnail(username,title,filename);
     }
     
     //Solamente coge la informacion del video

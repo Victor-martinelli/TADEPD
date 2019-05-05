@@ -90,14 +90,8 @@ public class DAO {
                 String thumbPath = folderPath + File.separator + filename;
                 // Open the file for writing.
                 File file = new File(thumbPath);
-                //Open the temp thumnbnail and delete it
-                File aux = new File(folderPath+File.separator+"thumb.png");
-              //  aux.delete();
                 
                 fos = new FileOutputStream(file);
-                
-                //Moves upload to folder
-                copyFile(thumbPath,folderPath+File.separator+"thumb.png");
                 
                // file.delete();//Deletes original upload
 
@@ -105,6 +99,16 @@ public class DAO {
             Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return fos;
+    }
+    
+    public void moveThumbnail(String username, String title,String filename)
+    {
+        //Primero borramos la miniatura por defecto
+        new File(basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title+File.separator+"thumb.png").delete();
+        
+        
+        //Le cambiamos el nombre a la miniatura subida
+        new File(basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title+File.separator+filename).renameTo(new File(basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title+File.separator+"thumb.png"));
     }
     
 

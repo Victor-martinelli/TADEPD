@@ -35,6 +35,11 @@ public class VideoController {
         return dao.uploadThumbnail(username,title,filename);
     }
     
+    public void moveThumnbail(String username,String title,String filename)
+    {
+        dao.moveThumbnail(username, title, filename);
+    }
+    
     //Solamente coge la informacion del video
     public UserVideo getVideo(String username,String title)
     {

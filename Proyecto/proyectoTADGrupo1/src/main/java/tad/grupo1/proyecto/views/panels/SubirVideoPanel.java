@@ -42,7 +42,8 @@ public class SubirVideoPanel extends CssLayout implements View{
         VerticalLayout labels = new VerticalLayout();
         
         Label title = new Label("<h2>Subida de Videos</h2>",ContentMode.HTML);
-        Label warning = new Label("Ten en cuenta que el titulo del video sera el nombre del archivo sin la extension",ContentMode.HTML);
+        Label warning = new Label("Ten en cuenta que el titulo del video sera el nombre del archivo sin la extension y que solamente se aceptan videos en formato mp4",ContentMode.HTML);
+        Upload upload = createVideoUploadForm(username);
         
         content = new VerticalLayout();
         
@@ -52,10 +53,13 @@ public class SubirVideoPanel extends CssLayout implements View{
         labels.setSpacing(false);
         content.setSizeFull();
         
+        content.addComponents(labels,upload);
+        
         labels.setComponentAlignment(title, Alignment.MIDDLE_CENTER);
         labels.setComponentAlignment(warning, Alignment.MIDDLE_CENTER);
+        content.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
         
-        content.addComponents(labels,createVideoUploadForm(username));
+        
         
         content.setComponentAlignment(labels, Alignment.MIDDLE_RIGHT);
         
@@ -74,22 +78,28 @@ public class SubirVideoPanel extends CssLayout implements View{
         
         String videoTitle = session.getAttribute("currentVideo").toString();
         
+        session.setAttribute("curretnVideo", null);
+        
         Label title = new Label("<h2>Subida de Miniatura</h2>",ContentMode.HTML);
         Label warning = new Label("Sube una miniatura para tu video, si no subes una se aplicara una por defecto",ContentMode.HTML);
-        
+        Upload upload = createThumbUploadForm(username,videoTitle);
         
         content = new VerticalLayout();
         
+        content.addComponents(labels,upload);
         labels.addComponents(title,warning);
         labels.setSizeFull();
         labels.setMargin(false);
         labels.setSpacing(false);
         content.setSizeFull();
         
+        
+
         labels.setComponentAlignment(title, Alignment.MIDDLE_CENTER);
         labels.setComponentAlignment(warning, Alignment.MIDDLE_CENTER);
+        content.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
         
-        content.addComponents(labels,createThumbUploadForm(username,videoTitle));
+        
         
         content.setComponentAlignment(labels, Alignment.MIDDLE_RIGHT);
         

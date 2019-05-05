@@ -16,20 +16,22 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import org.apache.commons.io.output.NullOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import static tad.grupo1.proyecto.views.MainScreen.vc;
 import static tad.grupo1.proyecto.views.MainUI.session;
 import tad.grupo1.proyecto.views.panels.SubirVideoPanel;
 
-public class FileUploader implements Upload.Receiver ,SucceededListener {
+public class FileUploader implements Upload.Receiver, SucceededListener {
 
-    
     private String username;
     /*
-            0 --> Comprobar imagen
+            0 --> Comprobar thumnail
             1 --> Comprobar video
+            2 --> Comprobar foto de perfil
      */
     private int typeCheck;
     private CssLayout layout;
@@ -38,10 +40,10 @@ public class FileUploader implements Upload.Receiver ,SucceededListener {
     public FileUploader(CssLayout layout, String username, int typeCheck) {
         this.username = username;
         this.typeCheck = typeCheck;
-        this.layout=layout;
+        this.layout = layout;
     }
 
-    public FileUploader(CssLayout layout, String username, int typeCheck,String title) {
+    public FileUploader(CssLayout layout, String username, int typeCheck, String title) {
         this.username = username;
         this.typeCheck = typeCheck;
         this.layout = layout;
@@ -50,49 +52,75 @@ public class FileUploader implements Upload.Receiver ,SucceededListener {
 
     public OutputStream receiveUpload(String filename,
             String mimeType) {
+
         // Create upload stream
         FileOutputStream fos = null; // Stream to write to
-        if(typeCheck==1)
-        {
-            
-            session.setAttribute("currentVideo",filename.substring(0, filename.indexOf(".")));
-            fos = vc.uploadVideo(username, filename);
-            
-        }
-        else
-        {
-            fos = vc.uploadThumnbail(username,title, filename);
+
+        if (typeCheck == 1) {
+            //We only allow videos
+            if (mimeType.equals("video/mp4")) {
+                session.setAttribute("currentVideo", filename.substring(0, filename.indexOf(".")));
+                fos = vc.uploadVideo(username, filename);
+            } else {
+                new Notification("ERROR",
+                        "Solamente se admiten videos en formato .mp4",
+                        Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+                return new NullOutputStream();
+            }
+
+        } //Create Thumbnail Upload Stream
+        else if (typeCheck == 0) {
+            if (mimeType.equals("image/png"))//We only allow pngs
+            {
+                session.setAttribute("currentThumb", filename);
+                fos = vc.uploadThumnbail(username, title, filename);
+            } else {
+                new Notification("ERROR",
+                        "Solamente se admiten imagenes en formato .png",
+                        Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+                return new NullOutputStream();
+            }
         }
 
         return fos; // Return the output stream to write to
     }
-    
+
     //What happends when upload is successul
     public void uploadSucceeded(SucceededEvent event) {
         //Estabamos comprobando un video
-       if(typeCheck==1)
-       {
-           Notification.show("Exito",
-                  "El video se ha subido correctamente",
-                  Notification.Type.HUMANIZED_MESSAGE);
-           
-           SubirVideoPanel aux = (SubirVideoPanel)layout;
-           
-           aux.createSecondUploader();
-           
-       }
+        if (typeCheck == 1) {
+            //If upload didnt fail
+            if (session.getAttribute("currentVideo") != null) {
+                Notification.show("Exito",
+                        "El video se ha subido correctamente",
+                        Notification.Type.HUMANIZED_MESSAGE);
+
+                SubirVideoPanel aux = (SubirVideoPanel) layout;
+
+                aux.createSecondUploader();
+            }
+
+        } else if (typeCheck == 0) {
+            //If Upload didnt fail
+            if (session.getAttribute("currentThumb") != null) {
+                Notification.show("Exito",
+                        "Se ha subido la miniatura correctamente, ya puede ver el video accediendo a su canal",
+                        Notification.Type.HUMANIZED_MESSAGE);
+                vc.moveThumnbail(username, title, session.getAttribute("currentThumb").toString());
+
+                session.setAttribute("currentThumb", null);
+            }
+        }
     }
-    
-    public Upload createThumbUploadForm()
-    {
-    
-        return new Upload("Sube la imagen aqui",this);
+
+    public Upload createThumbUploadForm() {
+
+        return new Upload("Sube la imagen aqui", this);
     }
-    
-    public Upload createVideoUploadForm()
-    {
-    
-        return new Upload("Sube el video aqui",this);
+
+    public Upload createVideoUploadForm() {
+
+        return new Upload("Sube el video aqui", this);
     }
 
 };

@@ -13,12 +13,10 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import java.io.FileInputStream;
 import com.vaadin.server.Page;
+import java.io.FileInputStream;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Upload;
-import com.vaadin.ui.Upload.Receiver;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -51,11 +49,11 @@ public class DAO {
     }
 
     public FileOutputStream uploadVideo(String username, String filename) {
-        
+
         FileOutputStream fos = null;
- 
+
         String videoTitle = filename.substring(0, filename.indexOf("."));
-        
+
         try {
             String folderPath = basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + videoTitle;
             //Create video folder
@@ -65,10 +63,10 @@ public class DAO {
                 // Open the file for writing.
                 File file = new File(videoPath);
                 fos = new FileOutputStream(file);
-                //addVideo(videoTitle,username);
-                
+                addVideo(videoTitle, username);
+
                 //Add Default thumb
-                copyFile(basepath+File.separator+"thumb.png",folderPath+File.separator+"thumb.png");
+                copyFile(basepath + File.separator + "thumb.png", folderPath + File.separator + "thumb.png");
             } else {
 
             }
@@ -78,39 +76,71 @@ public class DAO {
         }
         return fos;
     }
-    
-    public FileOutputStream uploadThumbnail(String username, String title,String filename) {
-        
+
+    public FileOutputStream uploadThumbnail(String username, String title, String filename) {
+
         FileOutputStream fos = null;
- 
-        
+
         try {
             String folderPath = basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title;
             //Create video folder
-                String thumbPath = folderPath + File.separator + filename;
-                // Open the file for writing.
-                File file = new File(thumbPath);
-                
-                fos = new FileOutputStream(file);
-                
-               // file.delete();//Deletes original upload
+            String thumbPath = folderPath + File.separator + filename;
+            // Open the file for writing.
+            File file = new File(thumbPath);
 
+            fos = new FileOutputStream(file);
+
+            // file.delete();//Deletes original upload
         } catch (FileNotFoundException ex) {
             Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return fos;
     }
-    
-    public void moveThumbnail(String username, String title,String filename)
-    {
+
+    public void moveThumbnail(String username, String title, String filename) {
         //Primero borramos la miniatura por defecto
-        new File(basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title+File.separator+"thumb.png").delete();
-        
-        
+        new File(basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title + File.separator + "thumb.png").delete();
+
         //Le cambiamos el nombre a la miniatura subida
-        new File(basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title+File.separator+filename).renameTo(new File(basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title+File.separator+"thumb.png"));
+        new File(basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title + File.separator + filename).renameTo(new File(basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title + File.separator + "thumb.png"));
     }
-    
+
+    public List<UserVideo> getVideosThatContainInTitle(String word) {
+        List<UserVideo> list = new ArrayList<UserVideo>();
+
+        //Encontrar los titulos de video que contains la palabra introducida
+        BasicDBObject q = new BasicDBObject();
+        BasicDBObject fields = new BasicDBObject("videos.$", 1);
+        q.put("videos.title", java.util.regex.Pattern.compile(word));
+        //User with the videos that we are looking for
+        DBCursor cursor = this.getDatabaseCollection().find(q,fields);
+
+        while(cursor.hasNext())
+        {
+            DBObject current = cursor.next();
+            
+            //Cogemos todos sus videos
+            BasicDBList currentVideos = (BasicDBList) current.get("videos");
+
+            //Iteramos sobre ellos
+            Iterator it = currentVideos.iterator();
+            while (it.hasNext()) {
+                
+                DBObject currentVideo = (DBObject) it.next();
+                
+                String title = currentVideo.get("title").toString();
+                String username = getUserWhoUploadedVideo(title);
+            
+            list.add(new UserVideo(username,title,(Date)currentVideo.get("date"),(int)currentVideo.get("views"),getVideoThumbnailPath(username,title)));
+                
+                
+            }
+            
+            
+        }
+        
+        return list;
+    }
 
     public UserVideo getVideo(String username, String title) {
 
@@ -233,12 +263,12 @@ public class DAO {
 
         Object result = new Object();
 
-        BasicDBObject whereQuery = new BasicDBObject();
         //Donde el titulo sea el buscado
-        whereQuery.put("videos.title", title);
-
+        BasicDBObject whereQuery = new BasicDBObject("videos.title", title);
+        BasicDBObject fields = new BasicDBObject("videos.$", 1);
+        
         //Resultado de la buscada
-        DBCursor cursor = collection.find(whereQuery);
+        DBCursor cursor = collection.find(whereQuery,fields);
 
         //Solamente queda coger el resultado
         while (cursor.hasNext()) {
@@ -253,6 +283,33 @@ public class DAO {
                 DBObject currentVideo = (DBObject) it.next();
                 result = currentVideo.get(searchedParameter);
             }
+
+        }
+
+        cursor.close();
+        closeConnection();
+
+        return result;
+    }
+    
+    public String getUserWhoUploadedVideo(String title)
+    {
+        DBCollection collection = this.getDatabaseCollection();
+
+        String result = "";
+
+        BasicDBObject whereQuery = new BasicDBObject();
+        //Donde el titulo sea el buscado
+        whereQuery.put("videos.title", title);
+
+        //Resultado de la buscada
+        DBCursor cursor = collection.find(whereQuery);
+
+        //Solamente queda coger el resultado
+        while (cursor.hasNext()) {
+            DBObject current = cursor.next();
+
+            result = (String) current.get("username");
 
         }
 
@@ -333,9 +390,8 @@ public class DAO {
 
         closeConnection();
     }
-    
-    private void addVideo(String title,String username)
-    {
+
+    private void addVideo(String title, String username) {
         // Crear documento video
         BasicDBObject video = new BasicDBObject();
 
@@ -460,39 +516,37 @@ public class DAO {
         BasicDBList listVideos = (BasicDBList) user.get("videos");
         return listVideos;
     }
-    
-    public void copyFile(String original, String destination)
-    {
-        
+
+    public void copyFile(String original, String destination) {
+
         InputStream inStream = null;
-	OutputStream outStream = null;
-		
-    	try{
-    		
-    	    File afile =new File(original);
-    	    File bfile =new File(destination);
-    		
-    	    inStream = new FileInputStream(afile);
-    	    outStream = new FileOutputStream(bfile);
-        	
-    	    byte[] buffer = new byte[1024];
-    		
-    	    int length;
-    	    //copy the file content in bytes 
-    	    while ((length = inStream.read(buffer)) > 0){
-    	  
-    	    	outStream.write(buffer, 0, length);
-    	 
-    	    }
-    	 
-    	    inStream.close();
-    	    outStream.close();
-    	    
-    	    
-    	}catch(IOException e){
-    	    e.printStackTrace();
-    	}
-        
+        OutputStream outStream = null;
+
+        try {
+
+            File afile = new File(original);
+            File bfile = new File(destination);
+
+            inStream = new FileInputStream(afile);
+            outStream = new FileOutputStream(bfile);
+
+            byte[] buffer = new byte[1024];
+
+            int length;
+            //copy the file content in bytes 
+            while ((length = inStream.read(buffer)) > 0) {
+
+                outStream.write(buffer, 0, length);
+
+            }
+
+            inStream.close();
+            outStream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

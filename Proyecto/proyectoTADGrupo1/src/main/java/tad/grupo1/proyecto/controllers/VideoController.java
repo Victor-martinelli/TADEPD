@@ -7,6 +7,7 @@ package tad.grupo1.proyecto.controllers;
 
 import com.vaadin.ui.Upload;
 import java.io.FileOutputStream;
+import java.util.List;
 import tad.grupo1.proyecto.DAO.DAO;
 import tad.grupo1.proyecto.objects.UserVideo;
 
@@ -23,6 +24,11 @@ public class VideoController {
     {
         dao.incrementVideoViews(title);
         return getVideo(username,title);
+    }
+    
+    public List<UserVideo> getVideosBusqueda(String word)
+    {
+        return dao.getVideosThatContainInTitle(word);
     }
     
     public FileOutputStream uploadVideo(String username,String filename)

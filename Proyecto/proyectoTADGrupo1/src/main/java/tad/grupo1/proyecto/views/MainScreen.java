@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import tad.grupo1.proyecto.controllers.UsuarioController;
 import tad.grupo1.proyecto.controllers.VideoController;
 import static tad.grupo1.proyecto.views.MainUI.session;
+import tad.grupo1.proyecto.views.panels.ResultadoBusquedaVideosPanel;
 import tad.grupo1.proyecto.views.panels.SubirVideoPanel;
 import tad.grupo1.proyecto.views.panels.VideoPanel;
 
@@ -108,9 +109,14 @@ public class MainScreen extends HorizontalLayout {
         
         Button searchButton = new Button(FontAwesome.SEARCH);
         
+        searchButton.addClickListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        createSearchResultVideoView(search.getValue());
+                    }
+                });
         
-        
-        aux.getTopBar().addComponents(search);
+        aux.getTopBar().addComponents(search,searchButton);
         
         //aux.setMargin(false);
         //aux.setSpacing(false);
@@ -140,6 +146,31 @@ public class MainScreen extends HorizontalLayout {
     }
     
     
+    public void createSearchResultVideoView(String word)
+    {
+        content = new VerticalLayout(top,new ResultadoBusquedaVideosPanel(this,word));
+        
+        page.removeAllComponents();
+        
+        page  = new HorizontalLayout(menu,content);
+        
+        page.setSizeFull();
+        
+        addComponent(page);
+    }
+    
+    public void createVideoPanel(String username,String title)
+    {
+        content = new VerticalLayout(top,new VideoPanel(username,title));
+        
+        page.removeAllComponents();
+        
+        page  = new HorizontalLayout(menu,content);
+        
+        page.setSizeFull();
+        
+        addComponent(page);
+    }
    
     
     // notify the view menu about view changes so that it can display which view

@@ -13,8 +13,10 @@ import java.util.List;
 public class UserVideo {
     
     private String title;
+    private String username;
     private Date date;
     private String videoPath;
+    private String thumbPath;
     private int views;
     private List likes;
     private List dislikes;
@@ -29,6 +31,15 @@ public class UserVideo {
         this.dislikes = dislikes;
         this.comments = comments;
     }
+
+    public UserVideo(String username,String title, Date date, int views,String thumbPath) {
+        this.username = username;
+        this.title = title;
+        this.date = date;
+        this.views = views;
+        this.thumbPath = thumbPath;
+    }
+    
 
     public List getLikes() {
         return likes;
@@ -136,10 +147,30 @@ public class UserVideo {
     {
         return likes.contains(username);
     }
+
+    public String getThumbPath() {
+        return thumbPath;
+    }
+
+    public void setThumbPath(String thumbPath) {
+        this.thumbPath = thumbPath;
+    }
+    
+    
     
     public boolean hasUserDisLikedVideo(String username)
     {
         return dislikes.contains(username);
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
+    
     
 }

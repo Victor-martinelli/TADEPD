@@ -21,7 +21,7 @@ import com.vaadin.ui.VerticalLayout;
 import java.io.File;
 import java.util.List;
 import org.vaadin.gwtav.GwtVideo;
-import tad.grupo1.proyecto.DAO.DAO;
+import tad.grupo1.proyecto.model.DAO;
 import tad.grupo1.proyecto.controllers.SuscripcionesController;
 import tad.grupo1.proyecto.controllers.VideoController;
 import tad.grupo1.proyecto.views.MainUI;

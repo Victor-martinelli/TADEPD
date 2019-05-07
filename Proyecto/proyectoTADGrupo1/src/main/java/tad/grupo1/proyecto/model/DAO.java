@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tad.grupo1.proyecto.DAO;
+package tad.grupo1.proyecto.model;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;

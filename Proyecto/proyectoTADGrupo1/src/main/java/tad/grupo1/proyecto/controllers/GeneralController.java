@@ -5,7 +5,7 @@
  */
 package tad.grupo1.proyecto.controllers;
 
-import tad.grupo1.proyecto.DAO.DAO;
+import tad.grupo1.proyecto.model.DAO;
 
 /**
  *

@@ -8,7 +8,7 @@ package tad.grupo1.proyecto.controllers;
 import com.vaadin.ui.Upload;
 import java.io.FileOutputStream;
 import java.util.List;
-import tad.grupo1.proyecto.DAO.DAO;
+import tad.grupo1.proyecto.model.DAO;
 import tad.grupo1.proyecto.objects.UserVideo;
 
 /**

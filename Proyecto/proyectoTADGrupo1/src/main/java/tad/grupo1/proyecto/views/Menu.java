@@ -55,6 +55,8 @@ public class Menu extends CssLayout {
         
         sidebar.setComponentAlignment(logo,Alignment.MIDDLE_CENTER);
         
+        
+        
         addComponent(sidebar);
         
     }

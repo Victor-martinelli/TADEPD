@@ -20,6 +20,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -51,11 +52,15 @@ public class VideoPanel extends CssLayout implements View {
     public VideoPanel(String username, String videoTitle) {
 
         VerticalLayout content = new VerticalLayout();
+        VerticalLayout layoutForVideoInfoPanel = new VerticalLayout();
         VerticalLayout usernameAndDate = new VerticalLayout();
         VerticalLayout commentSection = new VerticalLayout();
         HorizontalLayout uploaderInfo = new HorizontalLayout();
         HorizontalLayout videoInfo = new HorizontalLayout();
         HorizontalLayout interactionsInfo = new HorizontalLayout();
+        Panel commentPanel = new Panel();
+        Panel uploaderInfoPanel = new Panel();
+        Panel videoInfoPanel = new Panel();
         
         User uploader = new User(username,uc.getSuscriptores(username));
         video = vc.playVideo(username, videoTitle);
@@ -78,7 +83,8 @@ public class VideoPanel extends CssLayout implements View {
         commentSection.setSizeFull();
         videoInfo.setSizeFull();
         videoInfo.setMargin(true);
-
+        uploaderInfo.setMargin(true);
+        uploaderInfo.setSpacing(true);
         content.setMargin(false);
         content.setSpacing(false);
 
@@ -129,16 +135,26 @@ public class VideoPanel extends CssLayout implements View {
         sample.ssetPoster(new FileResource(
                 new File(vc.getVideoThumbnail(username, videoTitle)))); */
         commentSection.addComponents(commentsTitle,comment,sendCommentButton,getComments());
+        commentPanel.setContent(commentSection);
         usernameAndDate.addComponents(uploaderUsernameLabel, videoDateLabel);
         interactionsInfo.addComponents(likesButton, likesLabel, dislikesButton, dislikesLabel);
         videoInfo.addComponents(viewsLabel, interactionsInfo);
         uploaderInfo.addComponents(profile, usernameAndDate, subscribeButton,suscribeStatus);
-        content.addComponents(videoTitleLabel, sample, videoInfo, uploaderInfo,commentSection);
+        
+        
+        layoutForVideoInfoPanel.addComponents(videoInfo,uploaderInfo);
+        videoInfoPanel.setContent(layoutForVideoInfoPanel);
+        
+        
+        //VerticalLayout solamente es para los espacios
+        content.addComponents(videoTitleLabel, sample, new VerticalLayout(),videoInfoPanel, uploaderInfoPanel,new VerticalLayout(),commentPanel);
 
         videoInfo.setComponentAlignment(interactionsInfo, Alignment.MIDDLE_RIGHT);
         uploaderInfo.setComponentAlignment(subscribeButton, Alignment.MIDDLE_RIGHT);
         uploaderInfo.setComponentAlignment(suscribeStatus, Alignment.MIDDLE_RIGHT);
 
+        
+        
         addComponent(content);
 
     }
@@ -157,7 +173,7 @@ public class VideoPanel extends CssLayout implements View {
         } //El usuario no esta susrito al que ha subido el video
         else
         {
-            suscribeStatus = new Label("<h3>Suscríbete</h3>",ContentMode.HTML);
+            suscribeStatus = new Label("<h3>Suscr&iacute;bete</h3>",ContentMode.HTML);
         }
         
         interactionButton.addClickListener(new Button.ClickListener() {
@@ -170,7 +186,7 @@ public class VideoPanel extends CssLayout implements View {
                             uc.removeSuscripcion(currentUser, uploader.getUsername());
                             uploader.removeSuscriptores();
                             suscribeButton=false;
-                            suscribeStatus.setValue("<h3>Suscríbete</h3>");
+                            suscribeStatus.setValue("<h3>Suscr&iacute;bete</h3>");
                             new Notification("AVISO", "Ya no estás suscrito", Notification.TYPE_TRAY_NOTIFICATION).show(Page.getCurrent());
                         }
                         else //Si no estabamos suscritos

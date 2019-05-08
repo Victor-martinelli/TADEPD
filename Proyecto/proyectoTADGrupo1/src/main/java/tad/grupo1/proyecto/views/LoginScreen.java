@@ -3,6 +3,7 @@ package tad.grupo1.proyecto.views;
 import java.io.Serializable;
 
 import com.vaadin.event.ShortcutAction;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
@@ -13,6 +14,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
@@ -24,6 +26,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import tad.grupo1.proyecto.controllers.GeneralController;
 import tad.grupo1.proyecto.controllers.UsuarioController;
 
 /**
@@ -32,7 +35,8 @@ import tad.grupo1.proyecto.controllers.UsuarioController;
 public class LoginScreen extends CssLayout {
 
     private UsuarioController usuarioController = new UsuarioController();
-
+    private GeneralController gc = new GeneralController();
+    
     private TextField username;
     private PasswordField password;
     private Button login;
@@ -198,12 +202,19 @@ public class LoginScreen extends CssLayout {
     private CssLayout buildLoginInformation() {
         CssLayout loginInformation = new CssLayout();
         loginInformation.setStyleName("login-information");
+        Image logo = new Image("", new FileResource(
+                new File(gc.getLogo())));
+        
+        //logo.setWidth("30%");
+
+        logo.setWidth("90%");
+        
         Label loginInfoText = new Label(
-                "<h1>Login Information</h1>"
-                + "Log in as &quot;admin&quot; to have full access. Log in with any other username to have read-only access. For all users, any password is fine",
+                "<h1>Bienvenido</h1>"
+                + "Para acceder a la plataforma, por favor inicie sesi&oacute;n. Si no tiene un usuario, por favor reg&iacute;strese.",
                 ContentMode.HTML);
         loginInfoText.setSizeFull();
-        loginInformation.addComponent(loginInfoText);
+        loginInformation.addComponents(logo,loginInfoText);
         return loginInformation;
     }
 
@@ -214,7 +225,7 @@ public class LoginScreen extends CssLayout {
             loginListener.loginSuccessful();
         } else {
             showNotification(new Notification("Login failed",
-                    "Por favor, compruebe su nombre de usuario y contraseña e intente de nuevo.",
+                    "Por favor, compruebe su nombre de usuario y contrase&ntilde;a e intente de nuevo.",
                     Notification.Type.WARNING_MESSAGE));
             username.focus();
         }

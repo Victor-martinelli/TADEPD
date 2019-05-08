@@ -15779,6 +15779,10 @@ div.v-layout.v-horizontal.v-widget {
 	cursor: pointer;
 }
 
+.mytheme .side-menu {
+	background-color: red;
+}
+
 .mytheme input[type=number]::-webkit-inner-spin-button, .mytheme input[type=number]::-webkit-outer-spin-button {
 	-webkit-appearance: none;
 	margin: 0;

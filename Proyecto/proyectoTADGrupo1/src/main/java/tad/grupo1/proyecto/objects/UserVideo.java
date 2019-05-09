@@ -170,6 +170,11 @@ public class UserVideo {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    @Override
+    public String toString() {
+        return "UserVideo{" + "title=" + title + ", username=" + username + ", date=" + date + ", videoPath=" + videoPath + ", thumbPath=" + thumbPath + ", views=" + views + ", likes=" + likes + ", dislikes=" + dislikes + ", comments=" + comments + '}';
+    }
     
     
     

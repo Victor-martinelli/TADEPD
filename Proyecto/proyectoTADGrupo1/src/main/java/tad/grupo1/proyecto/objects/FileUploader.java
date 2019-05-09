@@ -59,8 +59,24 @@ public class FileUploader implements Upload.Receiver, SucceededListener {
         if (typeCheck == 1) {
             //We only allow videos
             if (mimeType.equals("video/mp4")) {
-                session.setAttribute("currentVideo", filename.substring(0, filename.indexOf(".")));
-                fos = vc.uploadVideo(username, filename);
+                
+                //We check if there is a video with that name already uploaded
+                
+                String videoName =filename.substring(0, filename.indexOf(".")); 
+                
+                if(vc.getVideosBusqueda(videoName).isEmpty()) //There is no video with that name
+                {
+                     session.setAttribute("currentVideo", videoName);
+                     fos = vc.uploadVideo(username, filename);
+                }
+                else
+                {
+                    new Notification("ERROR",
+                        "Ya existe un video con ese nombre en la plataforma, por favor cambie el nombre e intentelo de nuevo.",
+                        Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+                     return new NullOutputStream();
+                }
+               
             } else {
                 new Notification("ERROR",
                         "Solamente se admiten videos en formato .mp4",

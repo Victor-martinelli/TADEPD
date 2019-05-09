@@ -127,23 +127,17 @@ public class LoginScreen extends CssLayout {
         password.setIcon(FontAwesome.LOCK);
         password.setWidth(80, Unit.PERCENTAGE);
 
-        // Subir foto de perfil
-        Upload uploadFoto = subirFotoPerfil(nick.getValue());
-        uploadFoto.setImmediateMode(false);
-        uploadFoto.setIcon(FontAwesome.IMAGE);
-        uploadFoto.setWidth(80, Unit.PERCENTAGE);
 
         Button signUp = new Button("Sign Up");
         signUp.setStyleName(ValoTheme.BUTTON_FRIENDLY);
         signUp.setWidth(80, Unit.PERCENTAGE);
 
-        content.addComponents(labelRegistro, nick, email, password, uploadFoto, signUp);
+        content.addComponents(labelRegistro, nick, email, password, signUp);
 
         content.setComponentAlignment(labelRegistro, Alignment.TOP_CENTER);
         content.setComponentAlignment(nick, Alignment.MIDDLE_CENTER);
         content.setComponentAlignment(email, Alignment.MIDDLE_CENTER);
         content.setComponentAlignment(password, Alignment.MIDDLE_CENTER);
-        content.setComponentAlignment(uploadFoto, Alignment.MIDDLE_CENTER);
         content.setComponentAlignment(signUp, Alignment.MIDDLE_CENTER);
 
         window.setContent(content);
@@ -171,7 +165,6 @@ public class LoginScreen extends CssLayout {
             String new_email = email.getValue();
             String new_password = password.getValue();
 
-            // TODO: guardar foto de perfil
             
             // Comprobar campos no vacios
             if (new_nick != null && new_email != null && new_password != null && 
@@ -183,6 +176,9 @@ public class LoginScreen extends CssLayout {
                             Notification.Type.WARNING_MESSAGE));
                 } else {
                     usuarioController.registrarUsuario(new_nick, new_email, new_password);
+                    showNotification(new Notification("AVISO",
+                            "Usuario creado correctamente, ahora puede iniciar sesión",
+                            Notification.Type.HUMANIZED_MESSAGE));
                     this.getUI().getUI().removeWindow(window);
                 }
             }else{
@@ -243,33 +239,5 @@ public class LoginScreen extends CssLayout {
         void loginSuccessful();
     }
 
-    private Upload subirFotoPerfil(String nick) {
-        String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 
-        class FileUploader implements Upload.Receiver {
-
-            private File file;
-
-            public OutputStream receiveUpload(String filename, String mimeType) {
-                // Create upload stream
-                FileOutputStream fos = null; // Stream to write to
-                try {
-                    // Open the file for writing.
-                    file = new File(basepath + File.separator + "users" + File.separator + nick + File.separator + File.separator + filename);
-                    fos = new FileOutputStream(file);
-                } catch (final java.io.FileNotFoundException e) {
-                    new Notification("Could not open file<br/>",
-                            e.getMessage(),
-                            Notification.Type.ERROR_MESSAGE)
-                            .show(Page.getCurrent());
-                    return null;
-                }
-                return fos; // Return the output stream to write to
-            }
-        };
-
-        Upload upload = new Upload("Foto de perfil", new FileUploader());
-
-        return upload;
-    }
 }

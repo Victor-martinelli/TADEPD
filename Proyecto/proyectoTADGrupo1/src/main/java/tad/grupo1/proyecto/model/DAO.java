@@ -113,32 +113,29 @@ public class DAO {
         BasicDBObject fields = new BasicDBObject("videos.$", 1);
         q.put("videos.title", java.util.regex.Pattern.compile(word));
         //User with the videos that we are looking for
-        DBCursor cursor = this.getDatabaseCollection().find(q,fields);
+        DBCursor cursor = this.getDatabaseCollection().find(q, fields);
 
-        while(cursor.hasNext())
-        {
+        while (cursor.hasNext()) {
             DBObject current = cursor.next();
-            
+
             //Cogemos todos sus videos
             BasicDBList currentVideos = (BasicDBList) current.get("videos");
 
             //Iteramos sobre ellos
             Iterator it = currentVideos.iterator();
             while (it.hasNext()) {
-                
+
                 DBObject currentVideo = (DBObject) it.next();
-                
+
                 String title = currentVideo.get("title").toString();
                 String username = getUserWhoUploadedVideo(title);
-            
-            list.add(new UserVideo(username,title,(Date)currentVideo.get("date"),(int)currentVideo.get("views"),getVideoThumbnailPath(username,title)));
-                
-                
+
+                list.add(new UserVideo(username, title, (Date) currentVideo.get("date"), (int) currentVideo.get("views"), getVideoThumbnailPath(username, title)));
+
             }
-            
-            
+
         }
-        
+
         return list;
     }
 
@@ -266,9 +263,9 @@ public class DAO {
         //Donde el titulo sea el buscado
         BasicDBObject whereQuery = new BasicDBObject("videos.title", title);
         BasicDBObject fields = new BasicDBObject("videos.$", 1);
-        
+
         //Resultado de la buscada
-        DBCursor cursor = collection.find(whereQuery,fields);
+        DBCursor cursor = collection.find(whereQuery, fields);
 
         //Solamente queda coger el resultado
         while (cursor.hasNext()) {
@@ -291,9 +288,8 @@ public class DAO {
 
         return result;
     }
-    
-    public String getUserWhoUploadedVideo(String title)
-    {
+
+    public String getUserWhoUploadedVideo(String title) {
         DBCollection collection = this.getDatabaseCollection();
 
         String result = "";
@@ -426,6 +422,7 @@ public class DAO {
 
         usuario.append("username", username);
         usuario.append("password", password);
+        usuario.append("type", "user");
         usuario.append("email", email);
         usuario.append("suscriptores", 0);
 
@@ -435,9 +432,17 @@ public class DAO {
         BasicDBList listVideos = new BasicDBList();
         usuario.append("videos", listVideos);
 
+        //Introducir usuario en la base de datos
         collection.insert(usuario);
-
         closeConnection();
+
+        //Crear las carpetas necesarias para el usuario
+        String folderPath = basepath + File.separator + "users" + File.separator + username + File.separator + "videos";
+        //Create user folder
+        new File(folderPath).mkdirs();
+
+        //Add Default profile pciture
+        copyFile(basepath + File.separator + "profile.png", basepath + File.separator + "users" + File.separator + username + File.separator + "profile.png");
     }
 
     /**
@@ -491,14 +496,8 @@ public class DAO {
      * @param username
      * @return
      */
-    public Object getSuscripciones(String username) {
-        DBCollection collection = this.getDatabaseCollection();
-        BasicDBObject query = new BasicDBObject("username", username);
-        DBObject user = collection.findOne(query);
-
-        BasicDBList listSuscripciones = (BasicDBList) user.get("suscripciones");
-
-        return listSuscripciones;
+    public List<String> getSuscripciones(String username) {
+        return (List<String>) this.getUserInfo(username, "suscripciones");
     }
 
     /**
@@ -508,13 +507,25 @@ public class DAO {
      * @param username
      * @return
      */
-    public List getSuscritoVideo(String username) {
-        DBCollection collection = this.getDatabaseCollection();
-        BasicDBObject query = new BasicDBObject("username", username);
-        DBObject user = collection.findOne(query);
+    public List<UserVideo> getSuscritoVideo(String username) {
+        
+        List<UserVideo> list = new ArrayList<UserVideo>();
+        
+        //Cogemos todos sus videos
+        BasicDBList currentVideos = (BasicDBList) this.getUserInfo(username, "videos");
 
-        BasicDBList listVideos = (BasicDBList) user.get("videos");
-        return listVideos;
+        //Iteramos sobre ellos
+        Iterator it = currentVideos.iterator();
+        while (it.hasNext()) {
+
+            DBObject currentVideo = (DBObject) it.next();
+
+            list.add(new UserVideo(username, currentVideo.get("title").toString(), (Date) currentVideo.get("date"), (int) currentVideo.get("views"), getVideoThumbnailPath(username, currentVideo.get("title").toString())));
+
+        }
+        
+        return list;
+         
     }
 
     public void copyFile(String original, String destination) {

@@ -14,6 +14,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
@@ -37,6 +38,8 @@ public class SubirVideoPanel extends CssLayout implements View{
     public SubirVideoPanel(String username)
     {
     
+        Panel panel = new Panel();
+        
         this.username=username;
         
         VerticalLayout labels = new VerticalLayout();
@@ -63,15 +66,18 @@ public class SubirVideoPanel extends CssLayout implements View{
         
         content.setComponentAlignment(labels, Alignment.MIDDLE_RIGHT);
         
+        panel.setContent(content);
         
+        panel.setSizeFull();
         
-        
-        addComponent(content);
+        addComponent(panel);
         
     }
     
     public void createSecondUploader()
     {
+        Panel panel = new Panel();
+        
         this.removeAllComponents();
         
         VerticalLayout labels = new VerticalLayout();
@@ -84,7 +90,7 @@ public class SubirVideoPanel extends CssLayout implements View{
         Label warning = new Label("Sube una miniatura para tu video, si no subes una se aplicara una por defecto",ContentMode.HTML);
         Upload upload = createThumbUploadForm(username,videoTitle);
         
-        content = new VerticalLayout();
+        content.removeAllComponents();
         
         content.addComponents(labels,upload);
         labels.addComponents(title,warning);
@@ -98,15 +104,13 @@ public class SubirVideoPanel extends CssLayout implements View{
         labels.setComponentAlignment(title, Alignment.MIDDLE_CENTER);
         labels.setComponentAlignment(warning, Alignment.MIDDLE_CENTER);
         content.setComponentAlignment(upload, Alignment.MIDDLE_CENTER);
-        
-        
-        
         content.setComponentAlignment(labels, Alignment.MIDDLE_RIGHT);
         
+        panel.setContent(content);
         
+        panel.setSizeFull();
         
-        
-        addComponent(content);
+        addComponent(panel);
     }
     
     public Upload createVideoUploadForm(String username)

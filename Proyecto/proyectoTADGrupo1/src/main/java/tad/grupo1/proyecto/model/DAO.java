@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
+import tad.grupo1.proyecto.objects.User;
 import tad.grupo1.proyecto.objects.UserComment;
 import tad.grupo1.proyecto.objects.UserVideo;
 
@@ -171,7 +173,7 @@ public class DAO {
         while (it.hasNext()) {
             DBObject currentComentario = (DBObject) it.next();
 
-            list.add(new UserComment((Date) currentComentario.get("date"), currentComentario.get("comment").toString(), currentComentario.get("username").toString()));
+            list.add(new UserComment((Date) currentComentario.get("date"), currentComentario.get("comment").toString(), currentComentario.get("username").toString(),title));
         }
 
         return list;
@@ -369,6 +371,42 @@ public class DAO {
         closeConnection();
     }
 
+    public void deleteUser(String username) {
+        //Remove user from suscripciones
+
+        DBCollection allUsers = this.getDatabaseCollection();
+
+        DBCursor cursor = allUsers.find();
+
+        while (cursor.hasNext()) {
+            DBObject current = cursor.next();
+
+            List<String> suscripciones = (List<String>) current.get("suscripciones");
+
+            //If user to be deleted is in another users suscripciones
+            if (suscripciones.contains(username)) {
+                this.removeSuscripcion(current.get("username").toString(), username);
+            }
+        }
+
+        closeConnection();
+
+        //Remove from database
+        BasicDBObject document = new BasicDBObject();
+        document.put("username", username);
+        this.getDatabaseCollection().remove(document);
+        closeConnection();
+
+        //Remove folders
+        try {
+
+            FileUtils.deleteDirectory(new File(basepath + File.separator + "users" + File.separator + username));
+        } catch (IOException ex) {
+            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
     public void publishComment(String title, String username, String comment) {
 
         // Crear documento usurio
@@ -508,9 +546,9 @@ public class DAO {
      * @return
      */
     public List<UserVideo> getSuscritoVideo(String username) {
-        
+
         List<UserVideo> list = new ArrayList<UserVideo>();
-        
+
         //Cogemos todos sus videos
         BasicDBList currentVideos = (BasicDBList) this.getUserInfo(username, "videos");
 
@@ -523,10 +561,118 @@ public class DAO {
             list.add(new UserVideo(username, currentVideo.get("title").toString(), (Date) currentVideo.get("date"), (int) currentVideo.get("views"), getVideoThumbnailPath(username, currentVideo.get("title").toString())));
 
         }
-        
+
         return list;
-         
+
     }
+
+    public List<User> getAllUsers() {
+        DBCollection allUsers = this.getDatabaseCollection();
+
+        List<User> result = new ArrayList<User>();
+
+        DBCursor cursor = allUsers.find();
+
+        while (cursor.hasNext()) {
+            DBObject current = cursor.next();
+
+            result.add(new User(current.get("username").toString(), (int) current.get("suscriptores")));
+        }
+
+        closeConnection();
+        return result;
+    }
+
+    public List<UserVideo> getAllVideos() {
+        DBCollection allUsers = this.getDatabaseCollection();
+
+        List<UserVideo> result = new ArrayList<UserVideo>();
+
+        DBCursor cursor = allUsers.find();
+
+        //Recorremos todos los usuarios
+        while (cursor.hasNext()) {
+            DBObject current = cursor.next();
+
+            //Cogemos todos sus videos
+            BasicDBList currentVideos = (BasicDBList) current.get("videos");
+
+            //Iteramos sobre ellos
+            Iterator it = currentVideos.iterator();
+            while (it.hasNext()) {
+
+                DBObject currentVideo = (DBObject) it.next();
+
+                
+                
+                result.add(new UserVideo(currentVideo.get("title").toString(),current.get("username").toString(), (Date) currentVideo.get("date"), (int) currentVideo.get("views"),(ArrayList)currentVideo.get("likes"),(ArrayList)currentVideo.get("dislikes"),getVideoComments(currentVideo.get("title").toString())));
+
+            }
+        }
+
+        closeConnection();
+        return result;
+    }
+    
+    public void deleteVideo(String uploader,String title)
+    {
+        
+        //Borrar de la base de datos
+        BasicDBObject filter = new BasicDBObject();
+        BasicDBObject update = new BasicDBObject("$pull", new BasicDBObject("videos", new BasicDBObject("title",title)));
+
+         this.getDatabaseCollection().update(filter, update);
+
+        closeConnection();
+        
+        
+        //Remove video folder
+        //Remove folders
+        try {
+
+            FileUtils.deleteDirectory(new File(basepath + File.separator + "users" + File.separator + uploader+File.separator+"videos"+File.separator + title));
+        } catch (IOException ex) {
+            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+
+    public boolean isUserAdmin(String username) {
+        return this.getUserInfo(username, "type").toString().equals("admin");
+    }
+    
+    public void deleteComment(Date date,String title)
+    {
+        BasicDBObject newDocument
+                = new BasicDBObject().append("$pull",
+                        new BasicDBObject().append("videos.$.comments", 
+                                new BasicDBObject().append("date",date)));
+
+        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+
+        closeConnection();
+    }
+    
+    
+    
+    public List<UserComment> getAllComments()
+    {
+        List<UserVideo> videos = this.getAllVideos();
+        List<UserComment> result = new ArrayList<UserComment>();
+        
+        Iterator it = videos.iterator();
+        //Recorremos todos los comentarios de los videos
+        while(it.hasNext())
+        {
+            UserVideo current = (UserVideo) it.next();
+            
+            result.addAll(current.getComments());
+            
+        }
+        
+        return result;
+    }
+    
 
     public void copyFile(String original, String destination) {
 

@@ -48,6 +48,10 @@ public class SuscripcionesPanel extends CssLayout implements View {
 
         List<String> listSuscripciones = (List<String>) sc.getSuscripciones(username);
 
+        Label suscripcionesLabel = new Label("<h1><b>Suscripciones</b></h1>", ContentMode.HTML);
+        suscripcionesLayout.addComponent(suscripcionesLabel);
+        suscripcionesLayout.setComponentAlignment(suscripcionesLabel, Alignment.MIDDLE_CENTER);
+        
         if (listSuscripciones.size() < 0) {
             Label label = new Label("No se ha suscrito a ningun canal todavía.");
             suscripcionesLayout.addComponent(label);
@@ -55,10 +59,9 @@ public class SuscripcionesPanel extends CssLayout implements View {
             for (String nombre : listSuscripciones) {
                 List<UserVideo> listVideo = (List<UserVideo>) sc.getVideoSuscrito(nombre);
 
-                Label suscripcionesLabel = new Label("<h1><b>Suscripciones</b></h1>", ContentMode.HTML);
+                
                 Label nombreCanalLabel = new Label("<h2><b>" + nombre + "</b></h2>", ContentMode.HTML);
-                suscripcionesLayout.addComponents(suscripcionesLabel,nombreCanalLabel);
-                suscripcionesLayout.setComponentAlignment(suscripcionesLabel, Alignment.MIDDLE_CENTER);
+                suscripcionesLayout.addComponents(nombreCanalLabel);
 
                 if (listVideo.size() < 0) {
                     Label label = new Label("Este canal no tiene videos");

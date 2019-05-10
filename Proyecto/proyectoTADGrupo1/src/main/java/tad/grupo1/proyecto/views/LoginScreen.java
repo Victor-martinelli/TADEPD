@@ -217,6 +217,11 @@ public class LoginScreen extends CssLayout {
     private void login() {
 
         if (usuarioController.comprobarLogin(username.getValue(), password.getValue())) {
+            //Is user admin
+            if(usuarioController.isUserAdmin(username.getValue()))
+            {
+                MainUI.session.setAttribute("type","admin");
+            }
             MainUI.session.setAttribute("user", username.getValue());
             loginListener.loginSuccessful();
         } else {

@@ -6,7 +6,9 @@
 package tad.grupo1.proyecto.controllers;
 
 import com.vaadin.ui.Upload.Receiver;
+import java.util.List;
 import tad.grupo1.proyecto.model.DAO;
+import tad.grupo1.proyecto.objects.User;
 
 /**
  *
@@ -55,6 +57,21 @@ public class UsuarioController {
     public int getSuscriptores(String username)
     {
         return dao.getUserSuscriptores(username);
+    }
+    
+    public void deleteUser(String username)
+    {
+        dao.deleteUser(username);
+    }
+    
+    public List<User> getAllUsers()
+    {
+        return dao.getAllUsers();
+    }
+    
+    public boolean isUserAdmin(String username)
+    {
+        return dao.isUserAdmin(username);
     }
     
 }

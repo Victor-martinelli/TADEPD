@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -32,6 +33,18 @@ public class UserVideo {
         this.comments = comments;
     }
 
+    public UserVideo(String title, String username, Date date, int views, List likes, List dislikes,List<UserComment> comments) {
+        this.title = title;
+        this.username = username;
+        this.date = date;
+        this.views = views;
+        this.likes = likes;
+        this.dislikes = dislikes;
+        this.comments = comments;
+    }
+    
+    
+
     public UserVideo(String username,String title, Date date, int views,String thumbPath) {
         this.username = username;
         this.title = title;
@@ -39,6 +52,12 @@ public class UserVideo {
         this.views = views;
         this.thumbPath = thumbPath;
     }
+
+    public UserVideo(String title) {
+        this.title = title;
+    }
+    
+    
     
 
     public List getLikes() {
@@ -126,6 +145,8 @@ public class UserVideo {
     public void setDate(Date date) {
         this.date = date;
     }
+    
+    
 
 
     public List<UserComment> getComments() {
@@ -155,6 +176,32 @@ public class UserVideo {
     public void setThumbPath(String thumbPath) {
         this.thumbPath = thumbPath;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + Objects.hashCode(this.title);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final UserVideo other = (UserVideo) obj;
+        if (!Objects.equals(this.title, other.title)) {
+            return false;
+        }
+        return true;
+    }
+    
     
     
     

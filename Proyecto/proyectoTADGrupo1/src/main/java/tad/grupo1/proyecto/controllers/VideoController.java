@@ -7,8 +7,10 @@ package tad.grupo1.proyecto.controllers;
 
 import com.vaadin.ui.Upload;
 import java.io.FileOutputStream;
+import java.util.Date;
 import java.util.List;
 import tad.grupo1.proyecto.model.DAO;
+import tad.grupo1.proyecto.objects.UserComment;
 import tad.grupo1.proyecto.objects.UserVideo;
 
 /**
@@ -81,6 +83,25 @@ public class VideoController {
     {
         dao.undislikeVideo(title, username);
     }
+    
+    public List<UserVideo> getAllVideos()
+    {
+        return dao.getAllVideos();
+    }
 
+    public void deleteVideo(String uploader,String title)
+    {
+        dao.deleteVideo(uploader, title);
+    }
+    
+    public List<UserComment> getAllComments()
+    {
+        return dao.getAllComments();
+    }
+    
+    public void deleteComment(Date date,String title)
+    {
+        dao.deleteComment(date,title);
+    }
     
 }

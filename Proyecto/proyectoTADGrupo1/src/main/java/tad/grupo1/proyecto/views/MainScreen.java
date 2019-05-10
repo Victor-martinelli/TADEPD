@@ -39,7 +39,7 @@ public class MainScreen extends HorizontalLayout {
     public static UsuarioController uc = new UsuarioController();
     public static SuscripcionesController sc = new SuscripcionesController();
     public static VideoController vc = new VideoController();
-    public VideoPanel videopanel = new VideoPanel("mikehunt", "despacito2");
+    public VideoPanel videopanel;
     TopMenu top = createTopMenu();
     HorizontalLayout page;
     VerticalLayout videoContainer;
@@ -47,13 +47,10 @@ public class MainScreen extends HorizontalLayout {
 
     public MainScreen() {
         
-        content = new VerticalLayout(top,videopanel);
-
-        page = new HorizontalLayout(menu,content); 
-      
-        page.setSizeFull();
-
-        addComponent(page);
+        page = new HorizontalLayout();
+        content = new VerticalLayout();
+        
+        createSuscripcionesView(session.getAttribute("user").toString());
         
         
         
@@ -182,7 +179,7 @@ public class MainScreen extends HorizontalLayout {
         page.removeAllComponents();
         content.removeAllComponents();
         
-        content.addComponents(top,new SuscripcionesPanel(username));
+        content.addComponents(top,new SuscripcionesPanel(this,username));
 
         page.addComponents(menu,content);
         

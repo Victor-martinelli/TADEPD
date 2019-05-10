@@ -104,6 +104,17 @@ public class MainScreen extends HorizontalLayout {
                         createSuscripcionesView(username);
                     }
                 });
+         
+         closeSession.addClickListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        
+                        Notification.show("Exito",
+                        "Se ha cerrado la sesion correctamente, ya puede cerrar esta ventana.",
+                        Notification.Type.HUMANIZED_MESSAGE);
+                        session.invalidate();
+                    }
+                });
         
         
         return aux;

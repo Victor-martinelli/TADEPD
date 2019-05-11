@@ -101,6 +101,7 @@ public class MainScreen extends HorizontalLayout {
                         Notification.show("Exito",
                         "Se ha cerrado la sesion correctamente, ya puede cerrar esta ventana.",
                         Notification.Type.HUMANIZED_MESSAGE);
+                        session.setAttribute("user", null);
                         session.invalidate();
                     }
                 });

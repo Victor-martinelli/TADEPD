@@ -219,7 +219,7 @@ public class LoginScreen extends CssLayout {
             loginListener.loginSuccessful();
         } else {
             showNotification(new Notification("Login failed",
-                    "Por favor, compruebe su nombre de usuario y contrase&ntilde;a e intente de nuevo.",
+                    "Por favor, compruebe su nombre de usuario y contraseña e intente de nuevo.",
                     Notification.Type.WARNING_MESSAGE));
             username.focus();
         }

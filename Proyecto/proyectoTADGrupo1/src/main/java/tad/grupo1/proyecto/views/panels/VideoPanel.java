@@ -50,7 +50,7 @@ public class VideoPanel extends CssLayout implements View {
     Label dislikesLabel;
 
     public VideoPanel(String username, String videoTitle) {
-
+        
         VerticalLayout content = new VerticalLayout();
         VerticalLayout layoutForVideoInfoPanel = new VerticalLayout();
         VerticalLayout usernameAndDate = new VerticalLayout();
@@ -74,8 +74,8 @@ public class VideoPanel extends CssLayout implements View {
         dislikesLabel = new Label("<p>" + video.getDislikesCount() + "</p>", ContentMode.HTML);
 
         Button subscribeButton = createSuscribeButton(uploader);
-        Button likesButton = createInteractionButton(1, username, likesLabel);
-        Button dislikesButton = createInteractionButton(0, username, dislikesLabel);
+        Button likesButton = createInteractionButton(1, session.getAttribute("user").toString(), likesLabel);
+        Button dislikesButton = createInteractionButton(0, session.getAttribute("user").toString(), dislikesLabel);
         Button sendCommentButton = new Button("Publicar Comentario");
         TextArea comment = new TextArea("Tu comentario");
 
@@ -107,9 +107,9 @@ public class VideoPanel extends CssLayout implements View {
         sendCommentButton.addClickListener(new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
-                        vc.publishComment(video.getTitle(),username,comment.getValue());
+                        vc.publishComment(video.getTitle(),session.getAttribute("user").toString(),comment.getValue());
                         new Notification("AVISO", "Comentario Publicado", Notification.TYPE_TRAY_NOTIFICATION).show(Page.getCurrent());
-                        video.addComment(username,comment.getValue());
+                        video.addComment(session.getAttribute("user").toString(),comment.getValue());
                         comment.clear();
                         commentSection.removeAllComponents();
                         commentSection.addComponents(commentsTitle,comment,sendCommentButton,getComments());

@@ -74,7 +74,7 @@ public class VideoAdminPanel extends CssLayout implements View {
                         grid.getDataProvider().refreshAll();
                         grid.setHeightByRows(users.size());
                         Notification.show("Éxito",
-                        "Se ha subido borrado el vídeo correctamente",
+                        "Se ha borrado el vídeo correctamente",
                         Notification.Type.HUMANIZED_MESSAGE);
                         confirmation.removeAllComponents();
                     }

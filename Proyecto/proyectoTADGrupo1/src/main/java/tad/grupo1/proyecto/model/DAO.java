@@ -38,9 +38,7 @@ public class DAO {
     MongoClientURI uri = new MongoClientURI(
             "mongodb://mongoUser:mongoPassword@proyectotad2019-shard-00-00-dpclw.azure.mongodb.net:27017,proyectotad2019-shard-00-01-dpclw.azure.mongodb.net:27017,proyectotad2019-shard-00-02-dpclw.azure.mongodb.net:27017/test?ssl=true&replicaSet=proyectoTAD2019-shard-0&authSource=admin&retryWrites=true");
 
-    
     DBCollection collection = new MongoClient(uri).getDB("database").getCollection("proyectoTAD");
-    
 
     public FileOutputStream uploadVideo(String username, String filename) {
 
@@ -98,8 +96,8 @@ public class DAO {
         //Le cambiamos el nombre a la miniatura subida
         new File(basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title + File.separator + filename).renameTo(new File(basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title + File.separator + "thumb.png"));
     }
-    
-     public void moveProfilePicture(String username, String filename) {
+
+    public void moveProfilePicture(String username, String filename) {
         //Primero borramos la miniatura por defecto
         new File(basepath + File.separator + "users" + File.separator + username + File.separator + "profile.png").delete();
 
@@ -140,18 +138,18 @@ public class DAO {
 
         return list;
     }
-    
+
     public void changeUserPassword(String username, String password) {
         DBCollection collection = this.collection;
 
         Boolean result = false;
-        
+
         BasicDBObject newDocument = new BasicDBObject();
-	newDocument.append("$set", new BasicDBObject().append("password", password));
+        newDocument.append("$set", new BasicDBObject().append("password", password));
 
-	BasicDBObject searchQuery = new BasicDBObject().append("username", username);
+        BasicDBObject searchQuery = new BasicDBObject().append("username", username);
 
-	collection.update(searchQuery, newDocument);
+        collection.update(searchQuery, newDocument);
     }
 
     public UserVideo getVideo(String username, String title) {
@@ -186,7 +184,7 @@ public class DAO {
         while (it.hasNext()) {
             DBObject currentComentario = (DBObject) it.next();
 
-            list.add(new UserComment((Date) currentComentario.get("date"), currentComentario.get("comment").toString(), currentComentario.get("username").toString(),title));
+            list.add(new UserComment((Date) currentComentario.get("date"), currentComentario.get("comment").toString(), currentComentario.get("username").toString(), title));
         }
 
         return list;
@@ -212,12 +210,11 @@ public class DAO {
         collection.update(new BasicDBObject().append("username", user), newDocument);
 
         //Decrementamos el número de suscriptores
-
         BasicDBObject newDocument2
                 = new BasicDBObject().append("$inc",
                         new BasicDBObject().append("suscriptores", -1));
 
-       collection.update(new BasicDBObject().append("username", uploader), newDocument2);
+        collection.update(new BasicDBObject().append("username", uploader), newDocument2);
 
     }
 
@@ -231,7 +228,6 @@ public class DAO {
         collection.update(new BasicDBObject().append("username", user), newDocument);
 
         //Incrementamos el número de suscriptores
-
         BasicDBObject newDocument2
                 = new BasicDBObject().append("$inc",
                         new BasicDBObject().append("suscriptores", 1));
@@ -262,21 +258,19 @@ public class DAO {
         cursor.close();
         return result;
     }
-    
-    public FileOutputStream changeProfilePicture(String username,String filename) {
+
+    public FileOutputStream changeProfilePicture(String username, String filename) {
 
         FileOutputStream fos = null;
 
         try {
             fos = new FileOutputStream(new File(basepath + File.separator + "users" + File.separator + username + File.separator + filename));
-            
-            
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return fos;
-    } 
-    
+    }
 
     //Método que busca lo que le pidamos
     private Object getVideoInfo(String title, String searchedParameter) {
@@ -343,7 +337,6 @@ public class DAO {
                         new BasicDBObject().append("videos.$.views", 1));
 
         collection.update(new BasicDBObject().append("videos.title", title), newDocument);
-
         ;
     }
 
@@ -354,7 +347,6 @@ public class DAO {
                         new BasicDBObject().append("videos.$.likes", username));
 
         collection.update(new BasicDBObject().append("videos.title", title), newDocument);
-
         ;
     }
 
@@ -365,7 +357,6 @@ public class DAO {
                         new BasicDBObject().append("videos.$.likes", username));
 
         collection.update(new BasicDBObject().append("videos.title", title), newDocument);
-
         ;
     }
 
@@ -376,7 +367,6 @@ public class DAO {
                         new BasicDBObject().append("videos.$.dislikes", username));
 
         collection.update(new BasicDBObject().append("videos.title", title), newDocument);
-
         ;
     }
 
@@ -387,7 +377,6 @@ public class DAO {
                         new BasicDBObject().append("videos.$.dislikes", username));
 
         collection.update(new BasicDBObject().append("videos.title", title), newDocument);
-
         ;
     }
 
@@ -408,7 +397,6 @@ public class DAO {
                 this.removeSuscripcion(current.get("username").toString(), username);
             }
         }
-
         ;
 
         //Remove from database
@@ -441,7 +429,6 @@ public class DAO {
                         new BasicDBObject().append("videos.$.comments", usuario));
 
         collection.update(new BasicDBObject().append("videos.title", title), newDocument);
-
         ;
     }
 
@@ -461,7 +448,6 @@ public class DAO {
                         new BasicDBObject().append("videos", video));
 
         collection.update(new BasicDBObject().append("username", username), newDocument);
-
         ;
     }
 
@@ -533,7 +519,6 @@ public class DAO {
         DBCollection collection = this.collection;
         BasicDBObject query = new BasicDBObject("username", username);
         DBObject user = collection.findOne(query);
-
         ;
 
         if (user != null) {
@@ -593,7 +578,6 @@ public class DAO {
 
             result.add(new User(current.get("username").toString(), (int) current.get("suscriptores")));
         }
-
         ;
         return result;
     }
@@ -618,76 +602,60 @@ public class DAO {
 
                 DBObject currentVideo = (DBObject) it.next();
 
-                
-                
-                result.add(new UserVideo(currentVideo.get("title").toString(),current.get("username").toString(), (Date) currentVideo.get("date"), (int) currentVideo.get("views"),(ArrayList)currentVideo.get("likes"),(ArrayList)currentVideo.get("dislikes"),getVideoComments(currentVideo.get("title").toString())));
+                result.add(new UserVideo(currentVideo.get("title").toString(), current.get("username").toString(), (Date) currentVideo.get("date"), (int) currentVideo.get("views"), (ArrayList) currentVideo.get("likes"), (ArrayList) currentVideo.get("dislikes"), getVideoComments(currentVideo.get("title").toString())));
 
             }
         }
-
         ;
         return result;
     }
-    
-    public void deleteVideo(String uploader,String title)
-    {
-        
-        //Borrar de la base de datos
-        BasicDBObject filter = new BasicDBObject();
-        BasicDBObject update = new BasicDBObject("$pull", new BasicDBObject("videos", new BasicDBObject("title",title)));
 
-         this.collection.update(filter, update);
+    public void deleteVideo(String uploader, String title) {
 
-        ;
-        
-        
+        BasicDBObject match = new BasicDBObject("username", uploader);
+        BasicDBObject update = new BasicDBObject("videos", new BasicDBObject("title",title));
+        this.collection.update(match, new BasicDBObject("$pull", update));
+
         //Remove video folder
         //Remove folders
         try {
 
-            FileUtils.deleteDirectory(new File(basepath + File.separator + "users" + File.separator + uploader+File.separator+"videos"+File.separator + title));
+            FileUtils.deleteDirectory(new File(basepath + File.separator + "users" + File.separator + uploader + File.separator + "videos" + File.separator + title));
         } catch (IOException ex) {
             Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     public boolean isUserAdmin(String username) {
         return this.getUserInfo(username, "type").toString().equals("admin");
     }
-    
-    public void deleteComment(Date date,String title)
-    {
+
+    public void deleteComment(Date date, String title) {
         BasicDBObject newDocument
                 = new BasicDBObject().append("$pull",
-                        new BasicDBObject().append("videos.$.comments", 
-                                new BasicDBObject().append("date",date)));
+                        new BasicDBObject().append("videos.$.comments",
+                                new BasicDBObject().append("date", date)));
 
         collection.update(new BasicDBObject().append("videos.title", title), newDocument);
-
         ;
     }
-    
-    
-    
-    public List<UserComment> getAllComments()
-    {
+
+    public List<UserComment> getAllComments() {
         List<UserVideo> videos = this.getAllVideos();
         List<UserComment> result = new ArrayList<UserComment>();
-        
+
         Iterator it = videos.iterator();
         //Recorremos todos los comentarios de los videos
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             UserVideo current = (UserVideo) it.next();
-            
+
             result.addAll(current.getComments());
-            
+
         }
-        
+
         return result;
     }
-    
 
     public void copyFile(String original, String destination) {
 

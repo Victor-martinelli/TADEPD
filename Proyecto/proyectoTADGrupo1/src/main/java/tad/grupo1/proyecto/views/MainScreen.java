@@ -50,9 +50,9 @@ public class MainScreen extends HorizontalLayout {
         Menu aux = new Menu();
         
         Button myChannel = new Button("Mi canal");
-        Button uploadVideo = new Button("Subir video");
+        Button uploadVideo = new Button("Subir vídeo");
         Button suscripctions = new Button("Suscripciones");
-        Button closeSession = new Button("Cerrar Sesion");
+        Button closeSession = new Button("Cerrar Sesión");
         Image profile = new Image("", new FileResource(
                 new File(uc.getProfilePicture(username))));
         Label usernameLabel = new Label(username);

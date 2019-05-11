@@ -5,11 +5,10 @@
  */
 package tad.grupo1.proyecto.controllers;
 
-import com.vaadin.ui.Upload;
 import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.List;
-import tad.grupo1.proyecto.model.DAO;
+import static tad.grupo1.proyecto.controllers.GeneralController.dao;
 import tad.grupo1.proyecto.objects.UserComment;
 import tad.grupo1.proyecto.objects.UserVideo;
 
@@ -18,8 +17,6 @@ import tad.grupo1.proyecto.objects.UserVideo;
  * @author Portatil
  */
 public class VideoController {
-    
-    DAO dao = new DAO();
     
     //Esto incrementa el contador de visitas y coge el video (esto es para la vista de ver videos)
     public UserVideo playVideo(String username,String title)

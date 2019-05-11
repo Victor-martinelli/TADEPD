@@ -1,6 +1,5 @@
 package tad.grupo1.proyecto.views;
 
-import com.vaadin.annotations.Push;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
@@ -10,13 +9,11 @@ import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.WrappedSession;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
+import tad.grupo1.proyecto.controllers.GeneralController;
+import tad.grupo1.proyecto.controllers.SuscripcionesController;
+import tad.grupo1.proyecto.controllers.UsuarioController;
+import tad.grupo1.proyecto.controllers.VideoController;
 import tad.grupo1.proyecto.views.LoginScreen.LoginListener;
 
 /**
@@ -33,6 +30,11 @@ import tad.grupo1.proyecto.views.LoginScreen.LoginListener;
 public class MainUI extends UI {
 
     public static WrappedSession session;
+    
+    public static UsuarioController uc = new UsuarioController();
+    public static SuscripcionesController sc = new SuscripcionesController();
+    public static GeneralController gc = new GeneralController();
+    public static VideoController vc = new VideoController();
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {

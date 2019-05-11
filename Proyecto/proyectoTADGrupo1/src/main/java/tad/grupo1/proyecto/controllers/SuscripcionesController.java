@@ -6,7 +6,7 @@
 package tad.grupo1.proyecto.controllers;
 
 import java.util.List;
-import tad.grupo1.proyecto.model.DAO;
+import static tad.grupo1.proyecto.controllers.GeneralController.dao;
 import tad.grupo1.proyecto.objects.UserVideo;
 
 /**
@@ -14,8 +14,6 @@ import tad.grupo1.proyecto.objects.UserVideo;
  * @author Lydia
  */
 public class SuscripcionesController {
-    
-    DAO dao = new DAO();
     
     public List<String> getSuscripciones(String username){
         return dao.getSuscripciones(username);

@@ -5,14 +5,10 @@
  */
 package tad.grupo1.proyecto.views.panels;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.Resource;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.shared.ui.PreloadMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -22,14 +18,9 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import java.io.File;
 import java.util.List;
-import org.vaadin.gwtav.GwtVideo;
-import tad.grupo1.proyecto.model.DAO;
-import tad.grupo1.proyecto.controllers.SuscripcionesController;
-import tad.grupo1.proyecto.controllers.VideoController;
 import tad.grupo1.proyecto.objects.UserVideo;
 import tad.grupo1.proyecto.views.MainScreen;
-import static tad.grupo1.proyecto.views.MainScreen.sc;
-import tad.grupo1.proyecto.views.MainUI;
+import static tad.grupo1.proyecto.views.MainUI.sc;
 
 /**
  *

@@ -13,7 +13,7 @@ import tad.grupo1.proyecto.model.DAO;
  */
 public class GeneralController {
     
-    DAO dao = new DAO();
+    static DAO dao = new DAO();
     
     public String getLogo()
     {

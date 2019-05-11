@@ -7,16 +7,13 @@ package tad.grupo1.proyecto.model;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.vaadin.server.Page;
 import java.io.FileInputStream;
 import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Notification;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -41,14 +38,9 @@ public class DAO {
     MongoClientURI uri = new MongoClientURI(
             "mongodb://mongoUser:mongoPassword@proyectotad2019-shard-00-00-dpclw.azure.mongodb.net:27017,proyectotad2019-shard-00-01-dpclw.azure.mongodb.net:27017,proyectotad2019-shard-00-02-dpclw.azure.mongodb.net:27017/test?ssl=true&replicaSet=proyectoTAD2019-shard-0&authSource=admin&retryWrites=true");
 
-    /*
-    Metodo que crea una nueva conexión con la base de datos (hacia el exterior)
-     */
-    public DBCollection getDatabaseCollection() {
-
-        return new MongoClient(uri).getDB("database").getCollection("proyectoTAD");
-
-    }
+    
+    DBCollection collection = new MongoClient(uri).getDB("database").getCollection("proyectoTAD");
+    
 
     public FileOutputStream uploadVideo(String username, String filename) {
 
@@ -115,7 +107,7 @@ public class DAO {
         BasicDBObject fields = new BasicDBObject("videos.$", 1);
         q.put("videos.title", java.util.regex.Pattern.compile(word));
         //User with the videos that we are looking for
-        DBCursor cursor = this.getDatabaseCollection().find(q, fields);
+        DBCursor cursor = collection.find(q, fields);
 
         while (cursor.hasNext()) {
             DBObject current = cursor.next();
@@ -196,18 +188,18 @@ public class DAO {
                 = new BasicDBObject().append("$pull",
                         new BasicDBObject().append("suscripciones", uploader));
 
-        getDatabaseCollection().update(new BasicDBObject().append("username", user), newDocument);
+        collection.update(new BasicDBObject().append("username", user), newDocument);
 
-        closeConnection();
+        ;
         //Decrementamos el número de suscriptores
 
         BasicDBObject newDocument2
                 = new BasicDBObject().append("$inc",
                         new BasicDBObject().append("suscriptores", -1));
 
-        getDatabaseCollection().update(new BasicDBObject().append("username", uploader), newDocument2);
+       collection.update(new BasicDBObject().append("username", uploader), newDocument2);
 
-        closeConnection();
+        ;
     }
 
     public void addSuscripcion(String user, String uploader) {
@@ -217,22 +209,21 @@ public class DAO {
                 = new BasicDBObject().append("$push",
                         new BasicDBObject().append("suscripciones", uploader));
 
-        getDatabaseCollection().update(new BasicDBObject().append("username", user), newDocument);
+        collection.update(new BasicDBObject().append("username", user), newDocument);
 
-        closeConnection();
+        ;
         //Incrementamos el número de suscriptores
 
         BasicDBObject newDocument2
                 = new BasicDBObject().append("$inc",
                         new BasicDBObject().append("suscriptores", 1));
 
-        getDatabaseCollection().update(new BasicDBObject().append("username", uploader), newDocument2);
+        collection.update(new BasicDBObject().append("username", uploader), newDocument2);
 
-        closeConnection();
+        ;
     }
 
     public Object getUserInfo(String username, String searchedParameter) {
-        DBCollection collection = this.getDatabaseCollection();
 
         Object result = new Object();
 
@@ -252,13 +243,12 @@ public class DAO {
         }
 
         cursor.close();
-        closeConnection();
+        ;
         return result;
     }
 
     //Método que busca lo que le pidamos
     private Object getVideoInfo(String title, String searchedParameter) {
-        DBCollection collection = this.getDatabaseCollection();
 
         Object result = new Object();
 
@@ -286,13 +276,12 @@ public class DAO {
         }
 
         cursor.close();
-        closeConnection();
+        ;
 
         return result;
     }
 
     public String getUserWhoUploadedVideo(String title) {
-        DBCollection collection = this.getDatabaseCollection();
 
         String result = "";
 
@@ -312,7 +301,7 @@ public class DAO {
         }
 
         cursor.close();
-        closeConnection();
+        ;
 
         return result;
     }
@@ -322,9 +311,9 @@ public class DAO {
                 = new BasicDBObject().append("$inc",
                         new BasicDBObject().append("videos.$.views", 1));
 
-        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+        collection.update(new BasicDBObject().append("videos.title", title), newDocument);
 
-        closeConnection();
+        ;
     }
 
     public void unlikeVideo(String title, String username) {
@@ -333,9 +322,9 @@ public class DAO {
                 = new BasicDBObject().append("$pull",
                         new BasicDBObject().append("videos.$.likes", username));
 
-        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+        collection.update(new BasicDBObject().append("videos.title", title), newDocument);
 
-        closeConnection();
+        ;
     }
 
     public void likeVideo(String title, String username) {
@@ -344,9 +333,9 @@ public class DAO {
                 = new BasicDBObject().append("$push",
                         new BasicDBObject().append("videos.$.likes", username));
 
-        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+        collection.update(new BasicDBObject().append("videos.title", title), newDocument);
 
-        closeConnection();
+        ;
     }
 
     public void undislikeVideo(String title, String username) {
@@ -355,9 +344,9 @@ public class DAO {
                 = new BasicDBObject().append("$pull",
                         new BasicDBObject().append("videos.$.dislikes", username));
 
-        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+        collection.update(new BasicDBObject().append("videos.title", title), newDocument);
 
-        closeConnection();
+        ;
     }
 
     public void dislikeVideo(String title, String username) {
@@ -366,15 +355,15 @@ public class DAO {
                 = new BasicDBObject().append("$push",
                         new BasicDBObject().append("videos.$.dislikes", username));
 
-        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+        collection.update(new BasicDBObject().append("videos.title", title), newDocument);
 
-        closeConnection();
+        ;
     }
 
     public void deleteUser(String username) {
         //Remove user from suscripciones
 
-        DBCollection allUsers = this.getDatabaseCollection();
+        DBCollection allUsers = this.collection;
 
         DBCursor cursor = allUsers.find();
 
@@ -389,13 +378,13 @@ public class DAO {
             }
         }
 
-        closeConnection();
+        ;
 
         //Remove from database
         BasicDBObject document = new BasicDBObject();
         document.put("username", username);
-        this.getDatabaseCollection().remove(document);
-        closeConnection();
+        this.collection.remove(document);
+        ;
 
         //Remove folders
         try {
@@ -420,9 +409,9 @@ public class DAO {
                 = new BasicDBObject().append("$push",
                         new BasicDBObject().append("videos.$.comments", usuario));
 
-        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+        collection.update(new BasicDBObject().append("videos.title", title), newDocument);
 
-        closeConnection();
+        ;
     }
 
     private void addVideo(String title, String username) {
@@ -440,9 +429,9 @@ public class DAO {
                 = new BasicDBObject().append("$push",
                         new BasicDBObject().append("videos", video));
 
-        getDatabaseCollection().update(new BasicDBObject().append("username", username), newDocument);
+        collection.update(new BasicDBObject().append("username", username), newDocument);
 
-        closeConnection();
+        ;
     }
 
     /**
@@ -453,7 +442,7 @@ public class DAO {
      * @param password
      */
     public void insertUsuario(String username, String email, String password) {
-        DBCollection collection = this.getDatabaseCollection();
+        DBCollection collection = this.collection;
 
         // Crear documento usurio
         BasicDBObject usuario = new BasicDBObject();
@@ -472,7 +461,7 @@ public class DAO {
 
         //Introducir usuario en la base de datos
         collection.insert(usuario);
-        closeConnection();
+        ;
 
         //Crear las carpetas necesarias para el usuario
         String folderPath = basepath + File.separator + "users" + File.separator + username + File.separator + "videos";
@@ -491,11 +480,11 @@ public class DAO {
      * @return
      */
     public Boolean login(String username, String password) {
-        DBCollection collection = this.getDatabaseCollection();
+        DBCollection collection = this.collection;
 
         BasicDBObject query = new BasicDBObject("username", username).append("password", password);
         DBObject user = collection.findOne(query);
-        closeConnection();
+        ;
         if (user != null) {
             return true;
         } else {
@@ -510,22 +499,17 @@ public class DAO {
      * @return
      */
     public Boolean getUsername(String username) {
-        DBCollection collection = this.getDatabaseCollection();
+        DBCollection collection = this.collection;
         BasicDBObject query = new BasicDBObject("username", username);
         DBObject user = collection.findOne(query);
 
-        closeConnection();
+        ;
 
         if (user != null) {
             return true;
         } else {
             return false;
         }
-    }
-
-    //Cierra la conexión con Mongo
-    public void closeConnection() {
-        new MongoClient(uri).close();
     }
 
     /**
@@ -567,7 +551,7 @@ public class DAO {
     }
 
     public List<User> getAllUsers() {
-        DBCollection allUsers = this.getDatabaseCollection();
+        DBCollection allUsers = this.collection;
 
         List<User> result = new ArrayList<User>();
 
@@ -579,12 +563,12 @@ public class DAO {
             result.add(new User(current.get("username").toString(), (int) current.get("suscriptores")));
         }
 
-        closeConnection();
+        ;
         return result;
     }
 
     public List<UserVideo> getAllVideos() {
-        DBCollection allUsers = this.getDatabaseCollection();
+        DBCollection allUsers = this.collection;
 
         List<UserVideo> result = new ArrayList<UserVideo>();
 
@@ -610,7 +594,7 @@ public class DAO {
             }
         }
 
-        closeConnection();
+        ;
         return result;
     }
     
@@ -621,9 +605,9 @@ public class DAO {
         BasicDBObject filter = new BasicDBObject();
         BasicDBObject update = new BasicDBObject("$pull", new BasicDBObject("videos", new BasicDBObject("title",title)));
 
-         this.getDatabaseCollection().update(filter, update);
+         this.collection.update(filter, update);
 
-        closeConnection();
+        ;
         
         
         //Remove video folder
@@ -648,9 +632,9 @@ public class DAO {
                         new BasicDBObject().append("videos.$.comments", 
                                 new BasicDBObject().append("date",date)));
 
-        getDatabaseCollection().update(new BasicDBObject().append("videos.title", title), newDocument);
+        collection.update(new BasicDBObject().append("videos.title", title), newDocument);
 
-        closeConnection();
+        ;
     }
     
     

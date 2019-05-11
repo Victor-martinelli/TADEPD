@@ -5,9 +5,8 @@
  */
 package tad.grupo1.proyecto.controllers;
 
-import com.vaadin.ui.Upload.Receiver;
 import java.util.List;
-import tad.grupo1.proyecto.model.DAO;
+import static tad.grupo1.proyecto.controllers.GeneralController.dao;
 import tad.grupo1.proyecto.objects.User;
 
 /**
@@ -15,10 +14,6 @@ import tad.grupo1.proyecto.objects.User;
  * @author Lydia
  */
 public class UsuarioController {
-    
-    DAO dao = new DAO();
-    
-    
     
     public void registrarUsuario(String username, String email, String password){
         dao.insertUsuario(username, email, password);

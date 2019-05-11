@@ -30,9 +30,9 @@ import org.vaadin.gwtav.GwtVideo;
 import tad.grupo1.proyecto.objects.User;
 import tad.grupo1.proyecto.objects.UserComment;
 import tad.grupo1.proyecto.objects.UserVideo;
-import static tad.grupo1.proyecto.views.MainScreen.uc;
-import static tad.grupo1.proyecto.views.MainScreen.vc;
 import static tad.grupo1.proyecto.views.MainUI.session;
+import static tad.grupo1.proyecto.views.MainUI.uc;
+import static tad.grupo1.proyecto.views.MainUI.vc;
 
 /**
  *

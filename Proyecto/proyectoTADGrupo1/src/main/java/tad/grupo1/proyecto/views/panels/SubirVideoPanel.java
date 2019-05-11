@@ -6,23 +6,14 @@
 package tad.grupo1.proyecto.views.panels;
 
 import com.vaadin.navigator.View;
-import com.vaadin.server.AbstractErrorMessage;
-import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import tad.grupo1.proyecto.objects.FileUploader;
-import static tad.grupo1.proyecto.views.MainScreen.vc;
 import static tad.grupo1.proyecto.views.MainUI.session;
 
 /**

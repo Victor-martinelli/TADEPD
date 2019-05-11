@@ -8,20 +8,17 @@ package tad.grupo1.proyecto.views.panels;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FileResource;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import tad.grupo1.proyecto.objects.UserVideo;
 import tad.grupo1.proyecto.views.MainScreen;
-import static tad.grupo1.proyecto.views.MainScreen.vc;
+import static tad.grupo1.proyecto.views.MainUI.vc;
 
 /**
  *

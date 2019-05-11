@@ -6,7 +6,6 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
-import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -19,23 +18,17 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import tad.grupo1.proyecto.controllers.GeneralController;
-import tad.grupo1.proyecto.controllers.UsuarioController;
+import static tad.grupo1.proyecto.views.MainUI.gc;
+import static tad.grupo1.proyecto.views.MainUI.uc;
 
 /**
  * UI content when the user is not logged in yet.
  */
 public class LoginScreen extends CssLayout {
-
-    private UsuarioController usuarioController = new UsuarioController();
-    private GeneralController gc = new GeneralController();
     
     private TextField username;
     private PasswordField password;
@@ -170,12 +163,12 @@ public class LoginScreen extends CssLayout {
             if (new_nick != null && new_email != null && new_password != null && 
                     new_nick.length() > 0 && new_email.length() > 0 && new_password.length() > 0) {
                 // Comprobar username ya existente
-                if (usuarioController.comprobarUsername(new_nick)) {
+                if (uc.comprobarUsername(new_nick)) {
                     showNotification(new Notification("Nombre de usuario ya existe",
                             "Por favor introduzca otro nombre de usuario.",
                             Notification.Type.WARNING_MESSAGE));
                 } else {
-                    usuarioController.registrarUsuario(new_nick, new_email, new_password);
+                    uc.registrarUsuario(new_nick, new_email, new_password);
                     showNotification(new Notification("AVISO",
                             "Usuario creado correctamente, ahora puede iniciar sesión",
                             Notification.Type.HUMANIZED_MESSAGE));
@@ -216,9 +209,9 @@ public class LoginScreen extends CssLayout {
 
     private void login() {
 
-        if (usuarioController.comprobarLogin(username.getValue(), password.getValue())) {
+        if (uc.comprobarLogin(username.getValue(), password.getValue())) {
             //Is user admin
-            if(usuarioController.isUserAdmin(username.getValue()))
+            if(uc.isUserAdmin(username.getValue()))
             {
                 MainUI.session.setAttribute("type","admin");
             }

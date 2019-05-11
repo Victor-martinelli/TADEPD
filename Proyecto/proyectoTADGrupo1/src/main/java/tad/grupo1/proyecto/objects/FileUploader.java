@@ -16,13 +16,11 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import org.apache.commons.io.output.NullOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import static tad.grupo1.proyecto.views.MainScreen.vc;
 import static tad.grupo1.proyecto.views.MainUI.session;
+import static tad.grupo1.proyecto.views.MainUI.vc;
 import tad.grupo1.proyecto.views.panels.SubirVideoPanel;
 
 public class FileUploader implements Upload.Receiver, SucceededListener {

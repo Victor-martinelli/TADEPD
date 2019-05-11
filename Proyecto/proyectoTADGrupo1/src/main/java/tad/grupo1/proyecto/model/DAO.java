@@ -98,6 +98,14 @@ public class DAO {
         //Le cambiamos el nombre a la miniatura subida
         new File(basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title + File.separator + filename).renameTo(new File(basepath + File.separator + "users" + File.separator + username + File.separator + "videos" + File.separator + title + File.separator + "thumb.png"));
     }
+    
+     public void moveProfilePicture(String username, String filename) {
+        //Primero borramos la miniatura por defecto
+        new File(basepath + File.separator + "users" + File.separator + username + File.separator + "profile.png").delete();
+
+        //Le cambiamos el nombre a la miniatura subida
+        new File(basepath + File.separator + "users" + File.separator + username + File.separator + filename).renameTo(new File(basepath + File.separator + "users" + File.separator + username + File.separator + "profile.png"));
+    }
 
     public List<UserVideo> getVideosThatContainInTitle(String word) {
         List<UserVideo> list = new ArrayList<UserVideo>();
@@ -203,7 +211,6 @@ public class DAO {
 
         collection.update(new BasicDBObject().append("username", user), newDocument);
 
-        ;
         //Decrementamos el número de suscriptores
 
         BasicDBObject newDocument2
@@ -212,7 +219,6 @@ public class DAO {
 
        collection.update(new BasicDBObject().append("username", uploader), newDocument2);
 
-        ;
     }
 
     public void addSuscripcion(String user, String uploader) {
@@ -224,7 +230,6 @@ public class DAO {
 
         collection.update(new BasicDBObject().append("username", user), newDocument);
 
-        ;
         //Incrementamos el número de suscriptores
 
         BasicDBObject newDocument2
@@ -233,7 +238,6 @@ public class DAO {
 
         collection.update(new BasicDBObject().append("username", uploader), newDocument2);
 
-        ;
     }
 
     public Object getUserInfo(String username, String searchedParameter) {
@@ -258,6 +262,21 @@ public class DAO {
         cursor.close();
         return result;
     }
+    
+    public FileOutputStream changeProfilePicture(String username,String filename) {
+
+        FileOutputStream fos = null;
+
+        try {
+            fos = new FileOutputStream(new File(basepath + File.separator + "users" + File.separator + username + File.separator + filename));
+            
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return fos;
+    } 
+    
 
     //Método que busca lo que le pidamos
     private Object getVideoInfo(String title, String searchedParameter) {

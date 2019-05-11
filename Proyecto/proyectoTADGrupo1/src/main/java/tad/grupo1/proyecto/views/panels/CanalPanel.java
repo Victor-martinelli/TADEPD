@@ -1,6 +1,5 @@
 package tad.grupo1.proyecto.views.panels;
 
-import com.mongodb.BasicDBObject;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
@@ -16,22 +15,19 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import java.io.File;
 import java.util.List;
-import tad.grupo1.proyecto.controllers.SuscripcionesController;
-import tad.grupo1.proyecto.controllers.UsuarioController;
-import tad.grupo1.proyecto.model.DAO;
 import tad.grupo1.proyecto.objects.User;
 import tad.grupo1.proyecto.objects.UserVideo;
 import tad.grupo1.proyecto.views.MainScreen;
+import static tad.grupo1.proyecto.views.MainUI.sc;
 import static tad.grupo1.proyecto.views.MainUI.session;
+import static tad.grupo1.proyecto.views.MainUI.uc;
 
 public class CanalPanel extends CssLayout implements View {
 
     String username = session.getAttribute("user").toString();
-    SuscripcionesController sc = new SuscripcionesController();
-    UsuarioController uc = new UsuarioController();
-    DAO dao = new DAO();
     boolean suscribeButton = false;
     Label suscribeStatus;
+    
     private MainScreen layout;
 
     public CanalPanel(MainScreen layout, String userChannel) {
@@ -61,10 +57,11 @@ public class CanalPanel extends CssLayout implements View {
         if (username.equals(userChannel)) {
             boton = new Button("Configurar");
             boton.addClickListener( e -> layout.createConfView(userChannel));
+            suscribeStatus = new Label("");
         } else {
-            boton = createSuscribeButton(uploader);
+            boton = createSuscribeButton(uploader);    
         }
-        canalInfo.addComponents(profile, vl, boton);
+        canalInfo.addComponents(profile, vl, boton,suscribeStatus);
         canalInfo.setComponentAlignment(boton, Alignment.MIDDLE_RIGHT);
         return canalInfo;
     }
@@ -78,7 +75,7 @@ public class CanalPanel extends CssLayout implements View {
             Label label = new Label("Este canal no tiene videos");
             videos.addComponent(label);
         } else {
-            HorizontalLayout canalLayout = new HorizontalLayout();
+            VerticalLayout canalLayout = new VerticalLayout();
             canalLayout.setSpacing(true);
             canalLayout.setMargin(true);
             videos.addComponent(canalLayout);
@@ -89,7 +86,7 @@ public class CanalPanel extends CssLayout implements View {
 
                 Label tituloLabel = new Label("<h3>" + video.getTitle() + "</h3>", ContentMode.HTML);
                 
-                Image thumb = new Image("", new FileResource(new File(dao.getVideoThumbnailPath(userChannel, video.getTitle()))));
+                Image thumb = new Image("", new FileResource(new File(video.getThumbPath())));
                 thumb.setWidth("15em");
                 thumb.addClickListener( e -> layout.createVideoPanel(userChannel, video.getTitle()));
                 thumb.addStyleName("my-img-button");
@@ -104,6 +101,7 @@ public class CanalPanel extends CssLayout implements View {
     }
 
     private Button createSuscribeButton(User uploader) {
+        
         String currentUser = session.getAttribute("user").toString();
 
         Button interactionButton = new Button("Suscríbete");

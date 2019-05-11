@@ -109,6 +109,8 @@ public class VideoPanel extends CssLayout implements View {
                 new File(uc.getProfilePicture(username))));
         profile.addClickListener( e -> this.layout.createCanalView(username));
         
+        profile.addStyleName("my-img-button");
+        
         sendCommentButton.addClickListener(new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {

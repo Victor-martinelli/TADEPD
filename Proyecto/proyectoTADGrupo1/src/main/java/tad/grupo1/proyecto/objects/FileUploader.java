@@ -20,6 +20,7 @@ import org.apache.commons.io.output.NullOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import static tad.grupo1.proyecto.views.MainUI.session;
+import static tad.grupo1.proyecto.views.MainUI.uc;
 import static tad.grupo1.proyecto.views.MainUI.vc;
 import tad.grupo1.proyecto.views.panels.SubirVideoPanel;
 
@@ -95,6 +96,19 @@ public class FileUploader implements Upload.Receiver, SucceededListener {
                 return new NullOutputStream();
             }
         }
+        else if(typeCheck==2) //Foto de perfil
+        {
+            if (mimeType.equals("image/png"))//We only allow pngs
+            {
+                session.setAttribute("currentThumb", filename);
+                fos = uc.changeProfilePicture(username, filename);
+            } else {
+                new Notification("ERROR",
+                        "Solamente se admiten imagenes en formato .png",
+                        Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+                return new NullOutputStream();
+            }
+        }
 
         return fos; // Return the output stream to write to
     }
@@ -125,16 +139,28 @@ public class FileUploader implements Upload.Receiver, SucceededListener {
                 session.setAttribute("currentThumb", null);
             }
         }
+        else if(typeCheck == 2)
+        {
+            Notification.show("Exito",
+                        "Se ha cambiado su foto de perfil correctamente, por favor refresque la página para ver los cambios",
+                        Notification.Type.HUMANIZED_MESSAGE);
+            uc.moveProfilePicture(username,session.getAttribute("currentThumb").toString());
+        }
     }
 
     public Upload createThumbUploadForm() {
 
-        return new Upload("Sube la imagen aqui", this);
+        return new Upload("Sube la imagen aquí", this);
     }
 
     public Upload createVideoUploadForm() {
 
-        return new Upload("Sube el video aqui", this);
+        return new Upload("Sube el video aquí", this);
     }
 
+    public Upload createProfileUploadForm() {
+
+        return new Upload("Sube el video aquí tu foto de perfil", this);
+    }
+    
 };

@@ -5,6 +5,7 @@
  */
 package tad.grupo1.proyecto.controllers;
 
+import java.io.FileOutputStream;
 import java.util.List;
 import static tad.grupo1.proyecto.controllers.GeneralController.dao;
 import tad.grupo1.proyecto.objects.User;
@@ -19,6 +20,25 @@ public class UsuarioController {
         dao.insertUsuario(username, email, password);
     }
     
+    public String getPassword(String username,String parameter)
+    {
+        return (String) dao.getUserInfo(username, parameter);
+    }
+    
+    public void changePassword(String username,String password)
+    {
+        dao.changeUserPassword(username, password);
+    }
+    
+    public FileOutputStream changeProfilePicture(String username,String filename)
+    {
+        return dao.changeProfilePicture(username, filename);
+    }
+    
+    public void moveProfilePicture(String username,String filename)
+    {
+        dao.moveProfilePicture(username, filename);
+    }
     
     
     public Boolean comprobarLogin(String username, String password){

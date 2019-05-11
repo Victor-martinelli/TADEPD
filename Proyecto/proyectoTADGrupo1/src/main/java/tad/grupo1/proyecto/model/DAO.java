@@ -132,6 +132,19 @@ public class DAO {
 
         return list;
     }
+    
+    public void changeUserPassword(String username, String password) {
+        DBCollection collection = this.collection;
+
+        Boolean result = false;
+        
+        BasicDBObject newDocument = new BasicDBObject();
+	newDocument.append("$set", new BasicDBObject().append("password", password));
+
+	BasicDBObject searchQuery = new BasicDBObject().append("username", username);
+
+	collection.update(searchQuery, newDocument);
+    }
 
     public UserVideo getVideo(String username, String title) {
 
@@ -243,7 +256,6 @@ public class DAO {
         }
 
         cursor.close();
-        ;
         return result;
     }
 

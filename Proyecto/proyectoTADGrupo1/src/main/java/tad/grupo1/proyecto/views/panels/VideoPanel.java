@@ -30,6 +30,7 @@ import org.vaadin.gwtav.GwtVideo;
 import tad.grupo1.proyecto.objects.User;
 import tad.grupo1.proyecto.objects.UserComment;
 import tad.grupo1.proyecto.objects.UserVideo;
+import tad.grupo1.proyecto.views.MainScreen;
 import static tad.grupo1.proyecto.views.MainUI.session;
 import static tad.grupo1.proyecto.views.MainUI.uc;
 import static tad.grupo1.proyecto.views.MainUI.vc;
@@ -48,8 +49,11 @@ public class VideoPanel extends CssLayout implements View {
     UserVideo video;
     Label likesLabel;
     Label dislikesLabel;
-
-    public VideoPanel(String username, String videoTitle) {
+    private MainScreen layout;
+    
+    public VideoPanel(MainScreen layout, String username, String videoTitle) {
+        
+        this.layout = layout;
         
         VerticalLayout content = new VerticalLayout();
         VerticalLayout layoutForVideoInfoPanel = new VerticalLayout();
@@ -103,6 +107,7 @@ public class VideoPanel extends CssLayout implements View {
 
         Image profile = new Image("", new FileResource(
                 new File(uc.getProfilePicture(username))));
+        profile.addClickListener( e -> this.layout.createCanalView(username));
         
         sendCommentButton.addClickListener(new Button.ClickListener() {
                     @Override

@@ -27,7 +27,7 @@ public class MainScreenAdmin extends HorizontalLayout {
        
         content.setSizeFull();
         
-        Button closeSession = new Button("Cerrar Sesion");
+        Button closeSession = new Button("Cerrar Sesión");
         
          closeSession.addClickListener(new Button.ClickListener() {
                     @Override

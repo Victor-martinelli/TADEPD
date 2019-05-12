@@ -34,7 +34,7 @@ public class ResultadoBusquedaVideosPanel extends CssLayout implements View {
 
         content = new VerticalLayout();
 
-        Label result = new Label("<h2>Resultado de buscar videos que contengan la palabra: '" + word + "'</h2>", ContentMode.HTML);
+        Label result = new Label("<h2>Resultado de buscar v&iacute;deos que contengan la palabra: '" + word + "'</h2>", ContentMode.HTML);
 
         VerticalLayout resultVideos = getMatchingVideos(word);
 

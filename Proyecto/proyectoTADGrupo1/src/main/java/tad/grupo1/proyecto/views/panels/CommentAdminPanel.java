@@ -69,7 +69,7 @@ public class CommentAdminPanel extends CssLayout implements View {
             
             Button confirmationButton = new Button("Borrar comentario");
             
-            confirmation.addComponents(new Label("<h2><b>¿Esta seguro que quiere borrar al el comentario del usuario "+username+" que dice <br>'"+comentario+"'? - Pulse el bot&oacute;n para confirmar</b></h2>",ContentMode.HTML),confirmationButton);
+            confirmation.addComponents(new Label("<h2><b>¿Esta seguro que quiere borrar el comentario del usuario "+username+" que dice <br>'"+comentario+"'? - Pulse el bot&oacute;n para confirmar</b></h2>",ContentMode.HTML),confirmationButton);
             
             confirmationButton.addStyleName(ValoTheme.BUTTON_DANGER);
             confirmationButton.addClickListener(new Button.ClickListener() {

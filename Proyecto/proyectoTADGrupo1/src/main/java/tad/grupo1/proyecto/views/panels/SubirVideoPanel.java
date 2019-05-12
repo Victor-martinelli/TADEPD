@@ -36,7 +36,7 @@ public class SubirVideoPanel extends CssLayout implements View{
         VerticalLayout labels = new VerticalLayout();
         
         Label title = new Label("<h2>Subida de Videos</h2>",ContentMode.HTML);
-        Label warning = new Label("Ten en cuenta que el titulo del video sera el nombre del archivo sin la extension y que solamente se aceptan videos en formato mp4",ContentMode.HTML);
+        Label warning = new Label("Ten en cuenta que el titulo del video sera el nombre del archivo sin la extensi&oacute;n y que solamente se aceptan v&iacute;deos en formato mp4",ContentMode.HTML);
         Upload upload = createVideoUploadForm(username);
         
         content = new VerticalLayout();

@@ -301,7 +301,7 @@ public class DAO {
         }
 
         cursor.close();
-        ;
+        
 
         return result;
     }
@@ -326,7 +326,7 @@ public class DAO {
         }
 
         cursor.close();
-        ;
+        
 
         return result;
     }
@@ -347,7 +347,7 @@ public class DAO {
                         new BasicDBObject().append("videos.$.likes", username));
 
         collection.update(new BasicDBObject().append("videos.title", title), newDocument);
-        ;
+        
     }
 
     public void likeVideo(String title, String username) {
@@ -357,7 +357,7 @@ public class DAO {
                         new BasicDBObject().append("videos.$.likes", username));
 
         collection.update(new BasicDBObject().append("videos.title", title), newDocument);
-        ;
+        
     }
 
     public void undislikeVideo(String title, String username) {
@@ -367,7 +367,7 @@ public class DAO {
                         new BasicDBObject().append("videos.$.dislikes", username));
 
         collection.update(new BasicDBObject().append("videos.title", title), newDocument);
-        ;
+        
     }
 
     public void dislikeVideo(String title, String username) {
@@ -377,7 +377,7 @@ public class DAO {
                         new BasicDBObject().append("videos.$.dislikes", username));
 
         collection.update(new BasicDBObject().append("videos.title", title), newDocument);
-        ;
+        
     }
 
     public void deleteUser(String username) {
@@ -397,7 +397,7 @@ public class DAO {
                 this.removeSuscripcion(current.get("username").toString(), username);
             }
         }
-        ;
+        
 
         //Remove from database
         BasicDBObject document = new BasicDBObject();
@@ -429,7 +429,7 @@ public class DAO {
                         new BasicDBObject().append("videos.$.comments", usuario));
 
         collection.update(new BasicDBObject().append("videos.title", title), newDocument);
-        ;
+        
     }
 
     private void addVideo(String title, String username) {
@@ -448,7 +448,7 @@ public class DAO {
                         new BasicDBObject().append("videos", video));
 
         collection.update(new BasicDBObject().append("username", username), newDocument);
-        ;
+        
     }
 
     /**
@@ -478,7 +478,7 @@ public class DAO {
 
         //Introducir usuario en la base de datos
         collection.insert(usuario);
-        ;
+        
 
         //Crear las carpetas necesarias para el usuario
         String folderPath = basepath + File.separator + "users" + File.separator + username + File.separator + "videos";
@@ -501,7 +501,7 @@ public class DAO {
 
         BasicDBObject query = new BasicDBObject("username", username).append("password", password);
         DBObject user = collection.findOne(query);
-        ;
+        
         if (user != null) {
             return true;
         } else {
@@ -519,7 +519,7 @@ public class DAO {
         DBCollection collection = this.collection;
         BasicDBObject query = new BasicDBObject("username", username);
         DBObject user = collection.findOne(query);
-        ;
+        
 
         if (user != null) {
             return true;
@@ -578,7 +578,7 @@ public class DAO {
 
             result.add(new User(current.get("username").toString(), (int) current.get("suscriptores")));
         }
-        ;
+        
         return result;
     }
 
@@ -606,7 +606,7 @@ public class DAO {
 
             }
         }
-        ;
+        
         return result;
     }
 
@@ -638,7 +638,7 @@ public class DAO {
                                 new BasicDBObject().append("date", date)));
 
         collection.update(new BasicDBObject().append("videos.title", title), newDocument);
-        ;
+        
     }
 
     public List<UserComment> getAllComments() {
